@@ -82,6 +82,7 @@ svg text.d{font-family:Fredoka,sans-serif;font-weight:700}
 .ncard .q{display:grid;place-items:center;aspect-ratio:1;margin-bottom:7px;border-radius:8px;background:var(--soft);font-family:Fredoka;font-size:30px;color:#cdbfd6}
 .nboard{display:grid;justify-content:center;user-select:none;touch-action:none;margin:6px auto 0}
 .cl{font-weight:800;color:var(--ink);font-size:12px;transition:opacity .2s}
+.bigb .cl{font-size:10.5px}.bigb .cl.row{gap:3px;padding-right:4px}.bigb .cl.col{line-height:1.05}
 .cl.ok{opacity:.3}
 .cl.col{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding-bottom:4px;line-height:1.15}
 .cl.row{display:flex;justify-content:flex-end;align-items:center;gap:5px;padding-right:6px;white-space:nowrap}
@@ -142,7 +143,7 @@ svg text.d{font-family:Fredoka,sans-serif;font-weight:700}
 @keyframes shine{0%,70%{transform:translateX(-120%)}90%,100%{transform:translateX(120%)}}
 .gicon{animation:wobble 5s ease-in-out infinite}
 @keyframes wobble{0%,85%,100%{transform:rotate(0)}90%{transform:rotate(-10deg) scale(1.08)}95%{transform:rotate(8deg)}}
-.topbtns{position:fixed;top:12px;right:12px;display:flex;gap:6px;z-index:15}
+.topbtns{position:absolute;top:12px;right:12px;display:flex;gap:6px;z-index:15}
 .topbtns button{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:0 2px 0 var(--line);font-size:18px}
 .topbtns button.off{opacity:.45}
 .splash{position:fixed;inset:0;z-index:50;display:grid;place-items:center;text-align:center;padding:24px;
@@ -155,6 +156,48 @@ svg text.d{font-family:Fredoka,sans-serif;font-weight:700}
 @keyframes breathe{50%{transform:scale(1.06)}}
 .spark{position:fixed;pointer-events:none;z-index:60;font-size:18px;animation:spark .7s ease-out forwards}
 @keyframes spark{to{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
+/* ===== v3: pep talk, drops, trophies, free paint ===== */
+.affirm{position:relative;background:#fff;border-radius:22px;padding:16px 16px 12px;margin-bottom:14px;box-shadow:0 4px 0 var(--line);overflow:hidden}
+.affirm::before{content:"";position:absolute;inset:0 auto 0 0;width:6px;background:linear-gradient(#FF7A9C,#A55EEA)}
+.affirm small{font-weight:800;letter-spacing:.08em;font-size:11px;color:var(--coral)}
+.affirm p{font-family:Fredoka;font-weight:600;font-size:19px;line-height:1.35;margin:6px 0 10px;transition:opacity .25s,transform .25s}
+.affirm p.swap{opacity:0;transform:translateY(6px)}
+.aff-btns{display:flex;gap:8px}
+.aff-btns button{background:var(--soft);border-radius:999px;padding:7px 13px;font-weight:800;font-size:13px}
+.aff-btns .heart.on{background:#FFE3EC}
+.aff-mini{margin-top:8px;font-weight:700;font-size:14px;color:#6b5a78;line-height:1.4}
+.drop{display:flex;align-items:center;gap:12px;background:#2E2338;color:#fff;border-radius:20px;padding:13px 15px;margin:0 0 14px;box-shadow:0 4px 0 #18111f}
+.drop .gift{font-size:30px;animation:wobble 3s ease-in-out infinite}
+.drop b{font-family:Fredoka;font-size:17px;display:block}
+.drop span{font-size:13px;font-weight:700;opacity:.85}
+.trophyBtn{display:flex;align-items:center;justify-content:space-between;width:100%;background:linear-gradient(120deg,#FFF3C4,#FFE0B2);border-radius:20px;padding:14px 16px;font-weight:800;font-size:16px;box-shadow:0 4px 0 #F0CF8A;margin-bottom:6px}
+.trophyBtn .shelf{letter-spacing:2px}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;text-align:center}
+.tro{background:var(--soft);border-radius:14px;padding:10px 6px;font-size:12px;font-weight:800;line-height:1.25}
+.tro i{display:block;font-style:normal;font-size:28px;margin-bottom:4px}
+.tro.lock{opacity:.45;filter:grayscale(1)}
+.tro small{display:block;font-weight:700;color:var(--muted);font-size:10.5px;margin-top:3px}
+.saved{text-align:left;margin-top:14px}
+.saved div{background:#FFF1F6;border-radius:12px;padding:9px 11px;font-weight:700;font-size:13.5px;margin-top:6px}
+.sect{font-family:Fredoka;font-size:17px;margin:16px 2px 8px}
+.sect:first-child{margin-top:0}
+.locked-card{opacity:.6}
+.lockq{display:grid;place-items:center;aspect-ratio:1;margin-bottom:7px;border-radius:8px;background:repeating-linear-gradient(45deg,#F1E8F6,#F1E8F6 8px,#E9DDF0 8px,#E9DDF0 16px);font-size:24px}
+.pcard .lockq{border-radius:12px;font-size:34px;margin:0}
+.newdot{display:inline-block;background:var(--coral);color:#fff;border-radius:999px;font-size:10px;padding:2px 7px;margin-left:4px;vertical-align:middle}
+.pcanvas{background:#fff;border-radius:18px;padding:6px;box-shadow:0 4px 0 var(--line)}
+.pcanvas canvas{width:100%;aspect-ratio:1;display:block;border-radius:12px;touch-action:none;background:#fff}
+.prow{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.prow .tool{padding:8px 11px}
+.sz{width:40px;height:40px;border-radius:12px;background:var(--card);box-shadow:0 2px 0 var(--line);display:grid;place-items:center}
+.sz.on{background:var(--ink)}
+.sz i{display:block;border-radius:50%;background:var(--ink)}
+.sz.on i{background:#fff}
+.stamps{display:flex;gap:6px;justify-content:center;margin-top:8px}
+.stamps button{width:40px;height:40px;border-radius:12px;background:var(--card);font-size:20px;box-shadow:0 2px 0 var(--line)}
+.stamps button.on{box-shadow:0 0 0 3px var(--ink)}
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.gallery img{width:100%;aspect-ratio:1;border-radius:10px;border:2px solid var(--line);display:block;object-fit:cover}
 /* modal */
 .modal{position:fixed;inset:0;background:rgba(59,47,63,.55);display:grid;place-items:center;padding:18px;z-index:20}
 .modal[hidden]{display:none}
@@ -198,6 +241,8 @@ svg text.d{font-family:Fredoka,sans-serif;font-weight:700}
     <div class="mascot" id="mascot" onclick="bunnyTap()"><div class="bubble" id="bubble"></div><div id="mascotArt"></div></div>
   </div>
   <div class="live"><span><i class="dot"></i><b id="clock">--</b> in Lagos</span><span>🎨 New painting in <b id="countdown">--</b></span></div>
+  <div class="affirm"><small>💌 TODAY'S REMINDER FOR <span id="affName">MAY</span></small><p id="affText"></p>
+    <div class="aff-btns"><button onclick="nextAff()">Another one ✨</button><button class="heart" id="affHeart" onclick="loveAff()">🤍 Keep this</button></div></div>
   <button class="teaser" onclick="openSudoku()">
     <div class="tz-art locked" id="tzArt"></div>
     <div><small>TODAY'S MYSTERY PAINTING</small><h3 id="tzTitle">What could it be?</h3><p id="tzSub">Solve today's Paint Sudoku to unveil it</p></div>
@@ -214,7 +259,36 @@ svg text.d{font-family:Fredoka,sans-serif;font-weight:700}
     <div class="gicon" style="background:#DDF7EE">🧩</div>
     <div><h3>Picture Logic</h3><p>Use the number clues to shade squares and find the hidden picture.</p><span class="tag" id="nnTag">5 pictures</span></div>
   </button>
+  <button class="gcard" onclick="openPaint()">
+    <div class="gicon" style="background:#FFE3EC">🖌️</div>
+    <div><h3>Free Paint</h3><p>A blank canvas, brushes, glitter and stamps. Just vibes.</p><span class="tag" id="fpTag">Your gallery is empty</span></div>
+  </button>
+  <div class="drop" id="drop"></div>
+  <button class="trophyBtn" onclick="showTrophies()"><span>🏆 Trophy shelf</span><span id="trophyCount" class="shelf"></span></button>
   <div class="foot" id="foot">Made by Seun in Surulere (the better side of Lagos) 💜</div>
+</section>
+
+<!-- FREE PAINT -->
+<section class="view" id="paint" hidden>
+  <div class="bar"><button class="back" onclick="goHome()">←</button><h2>Free Paint</h2></div>
+  <div class="pcanvas"><canvas id="cv" width="720" height="720"></canvas></div>
+  <div class="cpal" id="fpPal"></div>
+  <div class="prow" id="fpSizes"></div>
+  <div class="prow">
+    <button class="tool on" data-t="brush" onclick="fpTool('brush')">🖌️ Brush</button>
+    <button class="tool" data-t="glitter" onclick="fpTool('glitter')">✨ Glitter</button>
+    <button class="tool" data-t="stamp" onclick="fpTool('stamp')">⭐ Stamp</button>
+    <button class="tool" data-t="eraser" onclick="fpTool('eraser')">🧽 Eraser</button>
+  </div>
+  <div class="stamps" id="fpStamps" hidden></div>
+  <div class="prow">
+    <button class="tool" onclick="fpUndo()">↶ Undo</button>
+    <button class="tool" onclick="fpClear()">🗑️ New canvas</button>
+    <button class="tool on" onclick="fpSave()">💾 Save to gallery</button>
+  </div>
+  <div class="sect">My gallery</div>
+  <div class="gallery" id="fpGallery"></div>
+  <p class="hint" id="fpEmpty">Your saved paintings will show up here.</p>
 </section>
 
 <!-- SUDOKU -->
@@ -281,7 +355,43 @@ const NOTES = {
     "Painting complete. Picasso who? 🎨",
     "You make this look easy. Same time tomorrow?"
   ],
+  // Daily confidence boosts (one per day on the homepage, plus extras on wins)
+  affirm: [
+    "You're the greatest, May. Walk into today like you know it.",
+    "You can do hard things. You've done them before, and you'll do them again.",
+    "Your brain solves 9×9 grids for fun. Whatever today throws at you, you've got it.",
+    "Small progress is still progress. Keep pushing.",
+    "You don't need permission to be brilliant. Go and be brilliant.",
+    "The world is better with your laugh in it.",
+    "Whatever you're working toward, it's working out. Keep going.",
+    "Rest if you need to, but don't quit. You're closer than you think.",
+    "You are allowed to take up space. Take all of it.",
+    "Somebody out there is inspired by you, even if they haven't said it yet.",
+    "You've survived 100% of your hardest days. That's an undefeated record.",
+    "Be proud of how far you've come. Then go further.",
+    "Your ideas matter. Say them out loud today.",
+    "Doubt is just noise. You already know you're good.",
+    "Champion energy only. Being No. 1 is a habit for you.",
+    "Today's goal: be kind to yourself and unstoppable at the same time.",
+    "Every big thing you want gets built one small square at a time.",
+    "You make hard things look easy. That's not luck, that's you.",
+    "Breathe. You're doing better than you think.",
+    "Don't shrink to fit any room. Let the room adjust to you.",
+    "Your future self is going to thank you for not giving up today.",
+    "Mistakes are just practice puzzles. Learn, reset, go again.",
+    "You were made for more, and you know it.",
+    "Confidence looks good on you. Wear it every day.",
+    "Go after your dreams the way you go after a leaderboard. 🏆",
+    "Even Lagos traffic can't stop you. Keep moving.",
+    "Your kindness is a superpower. Your brain is another one.",
+    "Whatever you started, finish it. You always do.",
+    "Today, choose yourself. Every single time.",
+    "You're not behind. You're on your own timeline, and it's a good one.",
+    "The room gets brighter when you walk in. Fact.",
+    "Big things are coming for you. Get ready to receive them."
+  ],
   bunny: [
+    "You're the greatest, don't forget 💜", "You can do anything today 💪", "Proud of you, champion 🏆",
     "Hi May! 👋", "Surulere > Yaba. Just saying 😤", "Ewa agoyin later? 🍛", "Pet a dog today? 🐶",
     "Purple drink break? 🍇", "Your teeth are cuter than mine 🐰", "Champion, are you ready?", "Tap me again, I dare you 😆"
   ],
@@ -368,14 +478,14 @@ const BUNNY_SVG=`<svg viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg">
  <rect x="55" y="96" width="5" height="8" rx="1.5" fill="#fff" stroke="#3B2F3F" stroke-width="2"/><rect x="60" y="96" width="5" height="8" rx="1.5" fill="#fff" stroke="#3B2F3F" stroke-width="2"/>
 </svg>`;
 let bubbleT=null,lastLine=-1;
-function bunnyTap(){const m=$('#mascot');m.classList.remove('jump');void m.offsetWidth;m.classList.add('jump');sfx.squeak();
+function bunnyTap(){bump('c_bunny');checkAch();const m=$('#mascot');m.classList.remove('jump');void m.offsetWidth;m.classList.add('jump');sfx.squeak();
   let k;do{k=Math.floor(Math.random()*NOTES.bunny.length)}while(k===lastLine&&NOTES.bunny.length>1);lastLine=k;
   const b=$('#bubble');b.textContent=NOTES.bunny[k];b.classList.add('on');clearTimeout(bubbleT);bubbleT=setTimeout(()=>b.classList.remove('on'),2600);
   const r=m.getBoundingClientRect();sparkle(r.left+r.width/2,r.top+r.height/2,8,['💜','✨','🥕'])}
 function spawnFloaters(){const f=$('#floaters');const em=['🐰','🐶','🍇','🎨','🌼','🖍️','💜','⭐','🍞','🧩','🌸'];
   for(let i=0;i<14;i++){const b=document.createElement('b');b.textContent=em[i%em.length];b.style.left=(Math.random()*92)+'vw';
     b.style.fontSize=(18+Math.random()*18)+'px';b.style.animationDuration=(14+Math.random()*16)+'s';b.style.animationDelay=(-Math.random()*25)+'s';
-    b.onclick=e=>{sfx.bubble();sparkle(e.clientX,e.clientY,6,[b.textContent,'✨']);b.classList.add('popped');
+    b.onclick=e=>{sfx.bubble();bump('c_pops');checkAch();sparkle(e.clientX,e.clientY,6,[b.textContent,'✨']);b.classList.add('popped');
       setTimeout(()=>{b.classList.remove('popped');b.style.left=(Math.random()*92)+'vw'},1200)};f.appendChild(b)}}
 function tickLive(){const now=new Date();
   try{$('#clock').textContent=now.toLocaleTimeString('en-NG',{hour:'numeric',minute:'2-digit',second:'2-digit',timeZone:'Africa/Lagos'})}catch(e){$('#clock').textContent=now.toLocaleTimeString()}
@@ -456,7 +566,39 @@ const PAGES=[
   R('path','d="M0 220 Q75 200 150 220 Q225 240 300 215 L300 300 L0 300Z"','#9BE29B'),
   R('circle','cx="255" cy="50" r="28"','#FECA57'),
   R('path','d="M30 80 Q30 60 52 62 Q60 44 82 50 Q100 42 108 62 Q126 64 124 80Z"','#FFFFFF'),
-  ...flowers()]}
+  ...flowers()]},
+ {id:'danfo',title:'Danfo Ride 🚌',unlock:'2026-11-14',parts:[
+  R('rect','x="0" y="0" width="300" height="300"','#DFF3FF'),
+  R('circle','cx="250" cy="48" r="24"','#FECA57'),
+  R('rect','x="0" y="232" width="300" height="68"','#636E72'),
+  R('rect','x="28" y="86" width="244" height="128" rx="20"','#FFC312'),
+  R('rect','x="28" y="164" width="244" height="12"','#2D2433'),
+  R('rect','x="46" y="104" width="40" height="40" rx="6"','#BEE9FF'),R('rect','x="98" y="104" width="40" height="40" rx="6"','#BEE9FF'),
+  R('rect','x="150" y="104" width="40" height="40" rx="6"','#BEE9FF'),R('rect','x="202" y="104" width="52" height="40" rx="6"','#BEE9FF'),
+  R('circle','cx="262" cy="190" r="7"','#FFF3B0'),
+  R('circle','cx="82" cy="216" r="22"','#2D2433'),R('circle','cx="222" cy="216" r="22"','#2D2433'),
+  R('circle','cx="82" cy="216" r="9"','#DFE6E9'),R('circle','cx="222" cy="216" r="9"','#DFE6E9'),
+  R('rect','x="40" y="262" width="40" height="8" rx="3"','#FFFFFF'),R('rect','x="130" y="262" width="40" height="8" rx="3"','#FFFFFF'),R('rect','x="220" y="262" width="40" height="8" rx="3"','#FFFFFF'),
+  T('x="150" y="200" font-size="15" text-anchor="middle"','YABA ⇄ SURULERE')]},
+ {id:'cupcake',title:'Cupcake Party 🧁',unlock:'2026-11-21',parts:[
+  R('rect','x="0" y="0" width="300" height="300"','#FFF0F6'),
+  R('rect','x="0" y="246" width="300" height="54"','#FFD6A5'),
+  R('path','d="M82 160 L218 160 L198 252 L102 252Z"','#48C9E8'),
+  R('path','d="M70 166 Q56 132 94 126 Q98 92 140 96 Q160 60 196 90 Q238 94 228 130 Q248 150 230 166Z"','#FF8ED4'),
+  R('circle','cx="166" cy="70" r="15"','#FF4757'),
+  R('rect','x="108" y="120" width="12" height="5" rx="2"','#FECA57'),R('rect','x="150" y="112" width="12" height="5" rx="2"','#1DD1A1'),
+  R('rect','x="190" y="128" width="12" height="5" rx="2"','#5F7FFF'),R('rect','x="128" y="145" width="12" height="5" rx="2"','#A55EEA'),
+  R('rect','x="176" y="148" width="12" height="5" rx="2"','#FF9F43'),
+  L('path','d="M166 55 Q170 40 182 36 M120 168 L126 248 M150 168 L150 248 M180 168 L174 248"'),
+  T('x="150" y="282" font-size="15" text-anchor="middle"','YOU DESERVE TREATS')]},
+ {id:'crown',title:'Queen\'s Crown 👑',unlock:'2026-11-28',parts:[
+  R('rect','x="0" y="0" width="300" height="300"','#FFF7E0'),
+  R('ellipse','cx="150" cy="246" rx="122" ry="30"','#A55EEA'),
+  R('path','d="M62 208 L50 100 L102 150 L150 78 L198 150 L250 100 L238 208Z"','#FECA57'),
+  R('rect','x="60" y="194" width="180" height="32" rx="7"','#FF9F43'),
+  R('circle','cx="100" cy="210" r="9"','#FF4757'),R('circle','cx="150" cy="210" r="10"','#5F7FFF'),R('circle','cx="200" cy="210" r="9"','#1DD1A1'),
+  R('circle','cx="50" cy="96" r="10"','#FF8ED4'),R('circle','cx="150" cy="72" r="11"','#FF8ED4'),R('circle','cx="250" cy="96" r="10"','#FF8ED4'),
+  T('x="150" y="290" font-size="15" text-anchor="middle"','QUEEN '+FOR_NAME.toUpperCase())]}
 ];
 function pageSVG(page,fills,painted){let i=0;
   const inner=page.parts.map(p=>{
@@ -465,24 +607,93 @@ function pageSVG(page,fills,painted){let i=0;
     return `<${p.t} class="${p.cls}" ${p.a}/>`}).join('');
   return `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`}
 
+/* ================= v3 engine ================= */
+const isOpen=d=>!d||todayKey()>=d;
+const fmtDate=d=>{const x=new Date(d+'T12:00:00');return x.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})};
+const recent=d=>d&&isOpen(d)&&(Date.now()-new Date(d+'T00:00:00'))<3*864e5;
+const availPages=()=>PAGES.filter(p=>isOpen(p.unlock));
+const bump=(k,n=1)=>{const v=store.get(k,0)+n;store.set(k,v);return v};
+function markWinTime(){const h=new Date().getHours();if(h>=23||h<4)store.set('f_night',true);if(h>=4&&h<7)store.set('f_early',true)}
+function affOfDay(){return (dayNum()*7+3)%NOTES.affirm.length}
+let affIdx=null;
+function renderAff(){if(affIdx==null)affIdx=affOfDay();$('#affText').textContent=NOTES.affirm[affIdx];
+  const on=store.get('aff_saved',[]).includes(affIdx);$('#affHeart').classList.toggle('on',on);$('#affHeart').textContent=on?'💖 Kept':'🤍 Keep this'}
+function nextAff(){const p=$('#affText');p.classList.add('swap');let k;do{k=Math.floor(Math.random()*NOTES.affirm.length)}while(k===affIdx);
+  setTimeout(()=>{affIdx=k;renderAff();p.classList.remove('swap')},220);tone(784,.3,'sine',.1);tone(1175,.4,'sine',.07,.08)}
+function loveAff(e){const s=new Set(store.get('aff_saved',[]));if(s.has(affIdx))s.delete(affIdx);else{s.add(affIdx);const r=$('#affHeart').getBoundingClientRect();sparkle(r.left+r.width/2,r.top,10,['💖','💜','✨']);sfx.squeak()}
+  store.set('aff_saved',[...s]);renderAff();checkAch()}
+function affMini(){return `<div class="aff-mini">💜 ${pick(NOTES.affirm)}</div>`}
+
+/* ---- weekly drops ---- */
+const DROPS=[
+  {date:'2026-11-12',what:'2 big 15×15 puzzles + Free Paint'},
+  {date:'2026-11-14',what:'2 big puzzles + a Danfo colouring page'},
+  {date:'2026-11-21',what:'2 big puzzles + a Cupcake colouring page'},
+  {date:'2026-11-28',what:'2 big puzzles + a Queen\'s Crown colouring page'}
+];
+function renderDrop(){const el=$('#drop'),nxt=DROPS.find(d=>!isOpen(d.date)),last=[...DROPS].reverse().find(d=>isOpen(d.date));
+  if(last&&recent(last.date)&&last.date!==DROPS[0].date){el.innerHTML=`<div class="gift">🎉</div><div><b>New drop just landed!</b><span>${last.what}. Go find it 👀</span></div>`;return}
+  if(!nxt){el.innerHTML=`<div class="gift">👀</div><div><b>More surprises coming</b><span>Keep an eye on this spot</span></div>`;return}
+  const ms=new Date(nxt.date+'T00:00:00')-Date.now(),d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4);
+  el.innerHTML=`<div class="gift">🎁</div><div><b>Next drop: ${fmtDate(nxt.date)}</b><span>${nxt.what} · in ${d?d+'d ':''}${h}h ${m}m</span></div>`}
+
+/* ---- trophies ---- */
+const ACH=[
+ ['first','🎨','First Painting','Solve any Paint Sudoku',()=>store.get('c_su',0)>=1],
+ ['triple','🌈','Triple Threat','All 3 sudoku levels in one day',()=>Object.keys(LEVELS).every(l=>(store.get('su_'+todayKey()+'_'+l,{})).done)],
+ ['nohint','🧠','No Help Needed','Solve a sudoku with zero hints',()=>store.get('c_nohint',0)>=1],
+ ['speed','⚡','Speed Painter','Easy under 1:30 or Classic under 5:00',()=>store.get('f_speed',false)],
+ ['tricky','💎','Tricky? Easy.','Solve a Tricky sudoku',()=>store.get('f_tricky',false)],
+ ['s3','🔥','On Fire','3-day painting streak',()=>streak()>=3],
+ ['s7','🌟','Week Queen','7-day painting streak',()=>streak()>=7],
+ ['s30','👑','Legend','30-day painting streak',()=>streak()>=30],
+ ['su10','🏅','Ten Down','Solve 10 sudokus',()=>store.get('c_su',0)>=10],
+ ['cb1','🖍️','First Masterpiece','Finish a colouring page',()=>store.get('cb_done',[]).length>=1],
+ ['cb5','🖼️','Gallery Owner','Finish 5 colouring pages',()=>store.get('cb_done',[]).length>=5],
+ ['art','🖌️','Free Spirit','Save a Free Paint artwork',()=>store.get('art',[]).length>=1||store.get('c_art',0)>=1],
+ ['nn5','🧩','Picture Detective','Solve 5 Picture Logic puzzles',()=>store.get('nn_done',[]).length>=5],
+ ['big1','🔎','Big Brain','Solve a 15×15 puzzle',()=>store.get('nn_done',[]).some(k=>NONO[k]&&NONO[k].big)],
+ ['bigAll','🏆','Unstoppable','Solve all 8 big puzzles',()=>NONO.filter(p=>p.big).every(p=>store.get('nn_done',[]).includes(NONO.indexOf(p)))],
+ ['night','🌙','Night Owl','Win a game after 11pm',()=>store.get('f_night',false)],
+ ['early','☀️','Early Bird','Win a game before 7am',()=>store.get('f_early',false)],
+ ['pops','🎈','Bubble Popper','Pop 25 floating emojis',()=>store.get('c_pops',0)>=25],
+ ['bun','🐰','Bunny\'s Bestie','Tap the bunny 20 times',()=>store.get('c_bunny',0)>=20],
+ ['love','💌','Self-Love Club','Keep 5 daily reminders',()=>store.get('aff_saved',[]).length>=5]
+];
+function checkAch(){const got=new Set(store.get('ach',[]));const fresh=ACH.filter(a=>!got.has(a[0])&&a[4]());
+  fresh.forEach((a,i)=>{got.add(a[0]);setTimeout(()=>{toast('🏆 Trophy unlocked: '+a[1]+' '+a[2]);tone(988,.25,'triangle',.1);tone(1319,.4,'triangle',.1,.12)},900+i*1900)});
+  if(fresh.length)store.set('ach',[...got]);updTrophyBtn()}
+function updTrophyBtn(){const got=store.get('ach',[]);const el=$('#trophyCount');if(!el)return;
+  el.textContent=(ACH.filter(a=>got.includes(a[0])).map(a=>a[1]).slice(-5).join('')||'')+'  '+got.length+'/'+ACH.length}
+function showTrophies(){const got=store.get('ach',[]),saved=store.get('aff_saved',[]);
+  modal(`<h2>🏆 ${FOR_NAME}'s Trophy Shelf</h2><div class="stats">${got.length} of ${ACH.length} unlocked</div>
+  <div class="tgrid">${ACH.map(a=>`<div class="tro ${got.includes(a[0])?'':'lock'}"><i>${a[1]}</i>${a[2]}<small>${a[3]}</small></div>`).join('')}</div>
+  ${saved.length?`<div class="saved"><div class="sect">💌 Reminders you kept</div>${saved.map(i=>`<div>${NOTES.affirm[i]}</div>`).join('')}</div>`:''}
+  <div class="btns"><button class="btn" onclick="closeModal()">Close</button></div>`)}
+
 /* ================= HOME ================= */
 function streak(){const days=new Set(store.get('su_days',[]));let n=0;const d=new Date();
   if(!days.has(keyOf(d)))d.setDate(d.getDate()-1);while(days.has(keyOf(d))){n++;d.setDate(d.getDate()-1)}return n}
-function goHome(){clearInterval(suTimer);clearInterval(nnTimer);closeModal();renderHome();show('home')}
+function goHome(){clearInterval(suTimer);clearInterval(nnTimer);if(FP.ctx)fpWip();closeModal();renderHome();show('home')}
 function renderHome(){
   const h=new Date().getHours();
   const greet=(h<12?'Good morning':h<17?'Hi':'Good evening')+', '+FOR_NAME;
-  $('#hiTitle').innerHTML=[...greet].map((ch,i)=>`<span style="animation-delay:${i*.035}s">${ch===' '?'&nbsp;':ch}</span>`).join('');
+  let ci=0;$('#hiTitle').innerHTML=greet.split(' ').map(w=>`<span style="display:inline-block;white-space:nowrap">${[...w].map(ch=>`<span style="animation-delay:${(ci++)*.035}s">${ch}</span>`).join('')}</span>`).join(' ');
   const lvKeys=Object.keys(LEVELS),solvedLv=lvKeys.find(l=>(store.get('su_'+todayKey()+'_'+l,{})).done);
-  const tzLv=solvedLv||'easy',tzPage=PAGES[(dayNum()+lvKeys.indexOf(tzLv)*2)%PAGES.length];
+  const AP=availPages(),tzLv=solvedLv||'easy',tzPage=AP[(dayNum()+lvKeys.indexOf(tzLv)*2)%AP.length];
   $('#tzArt').innerHTML=pageSVG(tzPage,null,true);$('#tzArt').classList.toggle('locked',!solvedLv);
   $('#tzTitle').textContent=solvedLv?tzPage.title:'What could it be?';
   $('#tzSub').textContent=solvedLv?'Unveiled! Try the other levels for more paintings':'Solve today\'s Paint Sudoku to unveil it';
   const s=streak();const st=$('#streak');st.hidden=!s;st.textContent='🔥 '+s+'-day painting streak';
   const doneLv=Object.keys(LEVELS).filter(l=>(store.get('su_'+todayKey()+'_'+l,{}).done));
   $('#suTag').textContent=doneLv.length?('Today: '+doneLv.length+'/3 solved ✓'):'New puzzle today';
-  const cd=store.get('cb_done',[]);$('#cbTag').textContent=cd.length?cd.length+'/'+PAGES.length+' pages finished':PAGES.length+' pages';
-  const nd=store.get('nn_done',[]);$('#nnTag').textContent=nd.length?nd.length+'/'+NONO.length+' pictures found':NONO.length+' pictures';
+  const cd=store.get('cb_done',[]);$('#cbTag').textContent=cd.length?cd.length+'/'+PAGES.length+' pages finished':availPages().length+' pages';
+  const nd=store.get('nn_done',[]),nOpen=NONO.filter(p=>isOpen(p.unlock)).length,nNew=NONO.some(p=>recent(p.unlock)&&!nd.includes(NONO.indexOf(p)));
+  $('#nnTag').innerHTML=(nd.length?nd.length+'/'+nOpen+' pictures found':nOpen+' pictures')+(nNew?'<span class="newdot">NEW</span>':'');
+  const cNew=PAGES.some(p=>recent(p.unlock)&&!cd.includes(p.id));if(cNew)$('#cbTag').innerHTML=$('#cbTag').textContent+'<span class="newdot">NEW</span>';
+  $('#cbTag').innerHTML=$('#cbTag').innerHTML.replace('/'+PAGES.length,'/'+availPages().length);
+  const art=store.get('art',[]);$('#fpTag').textContent=art.length?art.length+' painting'+(art.length>1?'s':'')+' in your gallery':'Your gallery is empty';
+  $('#affName').textContent=FOR_NAME.toUpperCase();renderAff();renderDrop();checkAch();
 }
 
 /* ================= PAINT SUDOKU ================= */
@@ -511,8 +722,8 @@ function startSudoku(level,practice){
   const seed=practice?(Math.random()*1e9|0):hashStr(todayKey()+level);
   const rng=rngF(seed);const {puzzle,solution}=genSudoku(Lv.N,Lv.br,Lv.bc,Lv.givens,rng);
   const sv=key?store.get(key,null):null;
-  const pIdx=practice?Math.floor(Math.random()*PAGES.length):(dayNum()+Object.keys(LEVELS).indexOf(level)*2)%PAGES.length;
-  SU={level,L:Lv,key,practice,puzzle,solution,board:sv?sv.board:puzzle.slice(),elapsed:sv?sv.elapsed:0,done:sv?sv.done:false,hints:sv?sv.hints:0,sel:-1,page:PAGES[pIdx]};
+  const AP=availPages(),pIdx=practice?Math.floor(Math.random()*AP.length):(dayNum()+Object.keys(LEVELS).indexOf(level)*2)%AP.length;
+  SU={level,L:Lv,key,practice,puzzle,solution,board:sv?sv.board:puzzle.slice(),elapsed:sv?sv.elapsed:0,done:sv?sv.done:false,hints:sv?sv.hints:0,sel:-1,page:AP[pIdx]};
   renderSuTabs();suBuild();show('sudoku');
   $('#suHelp').textContent=(practice?'Practice puzzle, so it doesn\'t count toward your streak. ':'Today\'s '+Lv.label+' puzzle. ')+'Each colour appears once in every row, column and box. Tap a square, then tap a paint.';
   if(!SU.done){const t0=Date.now()-SU.elapsed*1000;suTimer=setInterval(()=>{SU.elapsed=Math.floor((Date.now()-t0)/1000);$('#suTime').textContent=fmt(SU.elapsed);if(SU.elapsed%5===0)suSave()},1000)}
@@ -562,11 +773,13 @@ function suCheck(){if(!SU.board.every((v,i)=>v===SU.solution[i]))return;
   SU.done=true;clearInterval(suTimer);SU.sel=-1;suSave();suUpdate();
   if(!SU.practice){const d=new Set(store.get('su_days',[]));d.add(todayKey());store.set('su_days',[...d]);
     const bk='su_best_'+SU.level,best=store.get(bk,null);if(!SU.hints&&(best==null||SU.elapsed<best))store.set(bk,SU.elapsed);renderSuTabs()}
+  bump('c_su');if(!SU.hints)bump('c_nohint');if(SU.level==='tricky')store.set('f_tricky',true);
+  if((SU.level==='easy'&&SU.elapsed<90)||(SU.level==='classic'&&SU.elapsed<300))store.set('f_speed',true);markWinTime();checkAch();
   const best=store.get('su_best_'+SU.level,null);
   setTimeout(()=>{confetti();sfx.win();modal(`<h2>You painted it! 🎨</h2>
     <div class="art">${pageSVG(SU.page,null,true)}</div>
     <div class="stats">${SU.page.title} · ${SU.L.label} · ${fmt(SU.elapsed)}${SU.hints?' · '+SU.hints+' hint'+(SU.hints>1?'s':''):''}${best!=null?'<br>Best time: '+fmt(best):''}</div>
-    ${noteHTML(NOTES.sudoku)}
+    ${noteHTML(NOTES.sudoku)}${affMini()}
     <div class="btns"><button class="btn" onclick="suShare()">📋 Copy my result</button>
     <button class="btn alt" onclick="closeModal();openColor('${SU.page.id}')">🖍️ Colour this picture myself</button>
     <button class="btn alt" onclick="goHome()">Back to games</button></div>`)},450)}
@@ -580,8 +793,9 @@ let CB={page:null,fills:[],undo:[],col:CPAL[0]};
 function openColor(id){show('color');id?cbOpen(id):cbList()}
 function cbList(){$('#cbTitle').textContent='Colouring Book';$('#cbList').hidden=false;$('#cbPage').hidden=true;$('#cbBack').onclick=goHome;
   const done=store.get('cb_done',[]);
-  $('#cbList').innerHTML=PAGES.map(p=>`<button class="pcard" onclick="cbOpen('${p.id}')">${pageSVG(p,store.get('cb_'+p.id,[]),false)}
-    <h3>${p.title}</h3><small>${done.includes(p.id)?'Finished ✓':(store.get('cb_'+p.id,[]).some(Boolean)?'In progress':'Blank page')}</small></button>`).join('')}
+  $('#cbList').innerHTML=PAGES.map(p=>isOpen(p.unlock)?`<button class="pcard" onclick="cbOpen('${p.id}')">${pageSVG(p,store.get('cb_'+p.id,[]),false)}
+    <h3>${p.title}${recent(p.unlock)&&!done.includes(p.id)?'<span class="newdot">NEW</span>':''}</h3><small>${done.includes(p.id)?'Finished ✓':(store.get('cb_'+p.id,[]).some(Boolean)?'In progress':'Blank page')}</small></button>`
+    :`<button class="pcard locked-card" onclick="toast('🔒 Unlocks ${fmtDate(p.unlock)}')"><div class="lockq">🔒</div><h3>Mystery page</h3><small>Unlocks ${fmtDate(p.unlock)}</small></button>`).join('')}
 function cbOpen(id){const p=PAGES.find(x=>x.id===id);CB.page=p;CB.fills=store.get('cb_'+id,[]);CB.undo=[];
   $('#cbTitle').textContent=p.title;$('#cbList').hidden=true;$('#cbPage').hidden=false;$('#cbBack').onclick=cbList;
   cbDraw();
@@ -594,10 +808,59 @@ function cbPalUpd(){[...$('#cbPal').children].forEach(b=>b.classList.toggle('on'
 function cbSave(){store.set('cb_'+CB.page.id,CB.fills)}
 function cbUndo(){const u=CB.undo.pop();if(!u)return;CB.fills[u[0]]=u[1];cbSave();cbDraw()}
 function cbClear(){CB.undo=[];CB.fills=[];cbSave();cbDraw();toast('Fresh page ✨')}
-function cbDone(){const d=new Set(store.get('cb_done',[]));d.add(CB.page.id);store.set('cb_done',[...d]);confetti();sfx.win();
-  modal(`<h2>Masterpiece 🖼️</h2><div class="art">${pageSVG(CB.page,CB.fills,false)}</div>${noteHTML(NOTES.color)}
+function cbDone(){const d=new Set(store.get('cb_done',[]));d.add(CB.page.id);store.set('cb_done',[...d]);confetti();sfx.win();markWinTime();checkAch();
+  modal(`<h2>Masterpiece 🖼️</h2><div class="art">${pageSVG(CB.page,CB.fills,false)}</div>${noteHTML(NOTES.color)}${affMini()}
   <div class="btns"><button class="btn" onclick="closeModal();cbList()">Colour another page</button>
   <button class="btn alt" onclick="closeModal()">Keep painting this one</button><button class="btn alt" onclick="goHome()">Back to games</button></div>`)}
+
+/* ================= FREE PAINT ================= */
+const FP={tool:'brush',col:'#A55EEA',size:14,stamp:'⭐',undo:[],ctx:null,last:null,drawing:false};
+const STAMPS=['⭐','💜','🌸','🐰','🐶','✨','🌼','🍇'];
+function openPaint(){show('paint');fpInit();fpGallery()}
+function fpInit(){const cv=$('#cv');if(FP.ctx)return;FP.ctx=cv.getContext('2d');
+  const saved=store.get('fp_wip',null);
+  if(saved){const im=new Image();im.onload=()=>FP.ctx.drawImage(im,0,0,720,720);im.src=saved}else{FP.ctx.fillStyle='#fff';FP.ctx.fillRect(0,0,720,720)}
+  $('#fpPal').innerHTML=CPAL.map(c=>`<button style="background:${c}" data-c="${c}"></button>`).join('');
+  [...$('#fpPal').children].forEach((b,k)=>b.onclick=()=>{FP.col=b.dataset.c;if(FP.tool==='eraser')fpTool('brush');sfx.note(k%9+1);fpUi()});
+  $('#fpSizes').innerHTML=[6,14,28,48].map(z=>`<button class="sz" data-z="${z}"><i style="width:${Math.max(5,z/2.2)}px;height:${Math.max(5,z/2.2)}px"></i></button>`).join('');
+  [...$('#fpSizes').children].forEach(b=>b.onclick=()=>{FP.size=+b.dataset.z;sfx.tap();fpUi()});
+  $('#fpStamps').innerHTML=STAMPS.map(s=>`<button data-s="${s}">${s}</button>`).join('');
+  [...$('#fpStamps').children].forEach(b=>b.onclick=()=>{FP.stamp=b.dataset.s;sfx.tap();fpUi()});
+  const pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*720/r.width,(e.clientY-r.top)*720/r.height]};
+  cv.addEventListener('pointerdown',e=>{e.preventDefault();fpSnap();const [x,y]=pos(e);
+    if(FP.tool==='stamp'){const z=FP.size*2.4+20;FP.ctx.font=z+'px serif';FP.ctx.textAlign='center';FP.ctx.textBaseline='middle';FP.ctx.fillText(FP.stamp,x,y);sfx.bubble();fpWip();return}
+    FP.drawing=true;FP.last=[x,y];fpDot(x,y);try{cv.setPointerCapture(e.pointerId)}catch(_){}});
+  cv.addEventListener('pointermove',e=>{if(!FP.drawing)return;const [x,y]=pos(e);fpLine(FP.last,[x,y]);FP.last=[x,y]});
+  const end=()=>{if(FP.drawing){FP.drawing=false;fpWip()}};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+  fpUi()}
+function fpDot(x,y){const c=FP.ctx;if(FP.tool==='glitter')return fpGlit(x,y);c.fillStyle=FP.tool==='eraser'?'#fff':FP.col;c.beginPath();c.arc(x,y,FP.size/2,0,Math.PI*2);c.fill()}
+function fpLine(a,b){const c=FP.ctx;if(FP.tool==='glitter'){const d=Math.hypot(b[0]-a[0],b[1]-a[1]);for(let t=0;t<d;t+=6)fpGlit(a[0]+(b[0]-a[0])*t/d,a[1]+(b[1]-a[1])*t/d);return}
+  c.strokeStyle=FP.tool==='eraser'?'#fff':FP.col;c.lineWidth=FP.size;c.lineCap='round';c.lineJoin='round';c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+function fpGlit(x,y){const c=FP.ctx,base=FP.col;for(let i=0;i<3;i++){const r=Math.random()*FP.size,a=Math.random()*6.28;
+  c.fillStyle=Math.random()<.3?'#fff7c2':base;c.globalAlpha=.55+Math.random()*.45;c.beginPath();c.arc(x+Math.cos(a)*r,y+Math.sin(a)*r,1.5+Math.random()*2.5,0,6.28);c.fill()}c.globalAlpha=1}
+function fpSnap(){FP.undo.push(FP.ctx.getImageData(0,0,720,720));if(FP.undo.length>15)FP.undo.shift()}
+function fpUndo(){const u=FP.undo.pop();if(!u)return;FP.ctx.putImageData(u,0,0);sfx.erase();fpWip()}
+function fpClear(){fpSnap();FP.ctx.fillStyle='#fff';FP.ctx.fillRect(0,0,720,720);fpWip();toast('Fresh canvas ✨')}
+let wipT=null;function fpWip(){clearTimeout(wipT);wipT=setTimeout(()=>{try{store.set('fp_wip',$('#cv').toDataURL('image/jpeg',.8))}catch(e){}},400)}
+function fpTool(t){FP.tool=t;$('#fpStamps').hidden=t!=='stamp';fpUi()}
+function fpUi(){document.querySelectorAll('#paint .tool[data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===FP.tool));
+  [...$('#fpPal').children].forEach(b=>b.classList.toggle('on',b.dataset.c===FP.col&&FP.tool!=='eraser'));
+  [...$('#fpSizes').children].forEach(b=>b.classList.toggle('on',+b.dataset.z===FP.size));
+  [...$('#fpStamps').children].forEach(b=>b.classList.toggle('on',b.dataset.s===FP.stamp))}
+function fpSave(){const tmp=document.createElement('canvas');tmp.width=tmp.height=480;tmp.getContext('2d').drawImage($('#cv'),0,0,480,480);
+  const url=tmp.toDataURL('image/jpeg',.82);let art=store.get('art',[]);art.unshift({url,d:todayKey()});if(art.length>12)art=art.slice(0,12);
+  store.set('art',art);if(store.get('art',[]).length!==art.length){art.pop();store.set('art',art)}
+  bump('c_art');confetti();sfx.win();fpGallery();checkAch();
+  modal(`<h2>Saved to your gallery 🖼️</h2><div class="art"><img src="${url}" style="width:100%;display:block"></div>${noteHTML(NOTES.color)}${affMini()}
+  <div class="btns"><button class="btn" onclick="closeModal()">Keep painting</button></div>`)}
+function fpGallery(){const art=store.get('art',[]);$('#fpEmpty').hidden=art.length>0;
+  $('#fpGallery').innerHTML=art.map((a,i)=>`<img src="${a.url}" onclick="fpView(${i})" alt="Painting">`).join('')}
+function fpView(i){const a=store.get('art',[])[i];if(!a)return;
+  modal(`<h2>${fmtDate(a.d)}</h2><div class="art"><img src="${a.url}" style="width:100%;display:block"></div>
+  <p class="hint">Press and hold the picture to save it to your phone.</p>
+  <div class="btns"><a class="btn" href="${a.url}" download="${FOR_NAME}-painting-${i+1}.jpg" style="text-decoration:none">⬇️ Download</a>
+  <button class="btn alt" onclick="fpDel(${i})">🗑️ Delete</button><button class="btn alt" onclick="closeModal()">Close</button></div>`)}
+function fpDel(i){const art=store.get('art',[]);art.splice(i,1);store.set('art',art);closeModal();fpGallery()}
 
 /* ================= PICTURE LOGIC (nonograms) ================= */
 const NONO=[
@@ -607,23 +870,40 @@ const NONO=[
  {name:'Purple drink',col:{K:'#5B2C83',P:'#8E44AD',W:'#FFFFFF'},rows:["....KK....","....KK....","...PPPP...","..PPPPPP..","..PWWWWP..","..PWWWWP..","..PPPPPP..","..PPPPPP..","..PPPPPP..","...PPPP..."]},
  {name:'Agege bread',col:{O:'#D9822B',Y:'#FFE8B0'},rows:["..........","..OOOOOO..",".OOOOOOOO.","OOYYYYYYOO","OYYYYYYYYO","OYYYYYYYYO","OYYYYYYYYO","OYYYYYYYYO","OOOOOOOOOO",".........."]}
 ];
+const BIG=[
+ ['Crown','2026-11-12',{Y:'#FECA57',O:'#FF9F43'},["...............",".Y.....Y.....Y.",".YY...YYY...YY.",".YYY.YYYYY.YYY.",".YYYYYYYYYYYYY.",".YYYYYYYYYYYYY.",".YY.YYY.YYY.YY.",".YY.YYY.YYY.YY.",".YYYYYYYYYYYYY.",".YYYYYYYYYYYYY.","...............",".OOOOOOOOOOOOO.",".OOOOOOOOOOOOO.","...............","..............."]],
+ ['Heart balloon','2026-11-12',{R:'#FF4757',K:'#3B2F3F'},["..RRR.....RRR..",".RRRRR...RRRRR.","RRRRRRR.RRRRRRR","RRRRRRRRRRRRRRR","RR..RRRRRRRRRRR","RR.RRRRRRRRRRRR",".RRRRRRRRRRRRR.","..RRRRRRRRRRR..","...RRRRRRRRR...","....RRRRRRR....","......RRR......",".......K.......","........K......",".......K.......","........K......"]],
+ ['Cool puppy','2026-11-14',{B:'#7A4E2D',T:'#C68B59',K:'#2D2433',N:'#3B2F3F',P:'#FF7A9C'},[".BBB.......BBB.","BBBBB.....BBBBB","BBBBTTTTTTTBBBB","BBBTTTTTTTTTBBB","BBTTTTTTTTTTTBB",".KKKKKKKKKKKKK.",".TKKKKTTTKKKKT.",".TKKKKTTTKKKKT.",".TTKKTTTTTKKTT.",".TTTTTTTTTTTTT.","..TTTTNNNTTTT..","..TTTTTNTTTTT..","...TTTTTTTTT...",".....TTPTTT....","......PPP......"]],
+ ['Danfo','2026-11-14',{Y:'#FFC312',K:'#2D2433',G:'#636E72'},["...............","...............",".YYYYYYYYYYYYY.","YY..Y..Y..Y..YY","YY..Y..Y..Y..YY","YYYYYYYYYYYYYYY","YKKKKKKKKKKKKKY","YYYYYYYYYYYYYYY","YY.YYYYYYYYYYYY","YY.YYYYYYYYYYYY","YKKKKKKKKKKKKKY","YYYYYYYYYYYYYYY","..GG.......GG..","..GG.......GG..","..............."]],
+ ['Cupcake','2026-11-21',{R:'#FF4757',P:'#FF8ED4',O:'#E58E26'},[".......R.......","......RR.......",".....PPPPP.....","...PPPPPPPPP...","..PPPPPPPPPPP..",".PPPPPPPPPPPPP.",".PPPPPPPPPPPPP.","PPPPPPPPPPPPPPP",".OOOOOOOOOOOOO.",".O.O.O.O.O.O.O.","..OOOOOOOOOOO..","..O.O.O.O.O.O..","...OOOOOOOOO...","...OOOOOOOOO...","..............."]],
+ ['Butterfly','2026-11-21',{P:'#A55EEA',B:'#48C9E8',K:'#3B2F3F'},["...............",".PPP.......PPP.","PPPPP.K.K.PPPPP","PPPPPP.K.PPPPPP","PP..PPPKPPP..PP","PP..PPPKPPP..PP","PPPPPPPKPPPPPPP",".PPPPPPKPPPPPP.","..PPPPPKPPPPP..","..BBBBBKBBBBB..",".BBBBBBKBBBBBB.",".BB..BBKBB..BB.",".BBBBBBKBBBBBB.","..BBBB.K.BBBB..","..............."]],
+ ['Sunflower','2026-11-28',{Y:'#FECA57',O:'#8D6E63',G:'#1DD1A1'},["......YYY......","...YY.YYY.YY...","..YYYYYYYYYYY..","..YYYOOOOOYYY..","YYYYOOOOOOOYYYY","YYYOOOOOOOOOYYY",".YYOOOOOOOOOYY.","YYYOOOOOOOOOYYY","YYYYOOOOOOOYYYY","..YYYOOOOOYYY..","..YYYYYYYYYYY..","...YY.YGY.YY...","..GG...G..GG...","...GG.GG.GG....",".......G......."]],
+ ['House','2026-11-28',{R:'#FF6B6B',K:'#636E72',W:'#FFE6A7',G:'#1DD1A1'},[".......R.......","......RRR......",".....RRRRR..KK.","....RRRRRRR.KK.","...RRRRRRRRRKK.","..RRRRRRRRRRRR.",".RRRRRRRRRRRRRR","..WWWWWWWWWWW..","..W..WWWWW..W..","..W..WWWWW..W..","..WWWWW.WWWWW..","..WWWWW.WWWWW..","..WWWWW.WWWWW..","GGGGGGG.GGGGGGG","GGGGGGGGGGGGGGG"]]
+];
+BIG.forEach(([name,unlock,col,rows])=>NONO.push({name,unlock,col,rows,big:true}));
 let NN=null,nnTimer=null,nnMode=1,drag=null;
 function runs(arr){const o=[];let n=0;for(const v of arr){if(v)n++;else if(n){o.push(n);n=0}}if(n)o.push(n);return o.length?o:[0]}
 function openLogic(){show('logic');nnListView()}
 function nnListView(){clearInterval(nnTimer);$('#nnTitle').textContent='Picture Logic';$('#nnTime').hidden=true;$('#nnList').hidden=false;$('#nnPlay').hidden=true;$('#nnBack').onclick=goHome;
   const done=store.get('nn_done',[]);
-  $('#nnCards').innerHTML=NONO.map((p,k)=>{const N=p.rows.length;
+  const card=(p,k,label)=>{const N=p.rows.length;
+    if(!isOpen(p.unlock))return `<button class="ncard locked-card" onclick="toast('🔒 Unlocks ${fmtDate(p.unlock)}')"><div class="lockq">🔒</div>${fmtDate(p.unlock)}</button>`;
     const art=done.includes(k)?`<div class="mini" style="grid-template-columns:repeat(${N},1fr)">${p.rows.join('').split('').map(ch=>`<i style="background:${ch==='.'?'transparent':p.col[ch]}"></i>`).join('')}</div>`:`<div class="q">?</div>`;
-    return `<button class="ncard" onclick="nnOpen(${k})">${art}${done.includes(k)?p.name+' ✓':'Puzzle '+(k+1)}</button>`}).join('')}
+    return `<button class="ncard" onclick="nnOpen(${k})">${art}${done.includes(k)?p.name+' ✓':label}${recent(p.unlock)&&!done.includes(k)?'<span class="newdot">NEW</span>':''}</button>`};
+  const small=NONO.map((p,k)=>[p,k]).filter(([p])=>!p.big),big=NONO.map((p,k)=>[p,k]).filter(([p])=>p.big);
+  $('#nnList').querySelectorAll('.sect,.nlist.extra').forEach(e=>e.remove());
+  $('#nnCards').insertAdjacentHTML('beforebegin','<div class="sect">Classic · 10×10</div>');
+  $('#nnCards').innerHTML=small.map(([p,k],i)=>card(p,k,'Puzzle '+(i+1))).join('');
+  $('#nnCards').insertAdjacentHTML('afterend','<div class="sect">Big brain · 15×15</div><div class="nlist extra">'+big.map(([p,k],i)=>card(p,k,'Big #'+(i+1))).join('')+'</div>')}
 function nnOpen(k){const p=NONO[k],N=p.rows.length;
   const sol=p.rows.map(r=>r.split('').map(ch=>ch!=='.'));
   NN={k,p,N,sol,st:store.get('nn_'+k,null)||Array.from({length:N},()=>new Array(N).fill(0)),done:false,elapsed:0};
   NN.rc=sol.map(runs);NN.cc=[...Array(N).keys()].map(c=>runs(sol.map(r=>r[c])));
-  $('#nnTitle').textContent='Puzzle '+(k+1);$('#nnList').hidden=true;$('#nnPlay').hidden=false;$('#nnBack').onclick=nnListView;$('#nnTime').hidden=false;
+  $('#nnTitle').textContent=p.big?'Big #'+(NONO.filter(x=>x.big).indexOf(p)+1):'Puzzle '+(k+1);$('#nnList').hidden=true;$('#nnPlay').hidden=false;$('#nnBack').onclick=nnListView;$('#nnTime').hidden=false;
   nnBuild();setMode(1);const t0=Date.now();$('#nnTime').textContent='0:00';
   clearInterval(nnTimer);nnTimer=setInterval(()=>{NN.elapsed=Math.floor((Date.now()-t0)/1000);$('#nnTime').textContent=fmt(NN.elapsed)},1000)}
 function nnBuild(){const {N}=NN,b=$('#nnBoard');const maxR=Math.max(...NN.rc.map(r=>r.length));
-  const avail=Math.min(window.innerWidth-32,488)-(maxR*14+16);const cs=Math.max(22,Math.min(38,Math.floor(avail/N)));
+  const avail=Math.min(window.innerWidth-32,488)-(maxR*14+16);const cs=Math.max(N>10?18:22,Math.min(38,Math.floor(avail/N)));b.classList.toggle('bigb',N>10);
   b.style.gridTemplateColumns=`auto repeat(${N},${cs}px)`;b.style.gridAutoRows=`${cs}px`;b.innerHTML='';
   const corner=document.createElement('div');b.appendChild(corner);
   NN.cc.forEach((c,ci)=>{const d=document.createElement('div');d.className='cl col';d.id='cc'+ci;d.style.height=(Math.max(...NN.cc.map(x=>x.length))*15+6)+'px';d.innerHTML=c.map(n=>`<span>${n}</span>`).join('');b.appendChild(d)});
@@ -651,18 +931,18 @@ const endDrag=()=>{if(!drag)return;drag=null;store.set('nn_'+NN.k,NN.st);nnCheck
 board.addEventListener('pointerup',endDrag);board.addEventListener('pointercancel',endDrag);
 function nnClear(){if(NN.done)return;NN.st=NN.st.map(r=>r.map(()=>0));store.set('nn_'+NN.k,NN.st);nnPaint()}
 function nnCheck(){const ok=NN.sol.every((row,r)=>row.every((v,c)=>v===(NN.st[r][c]===1)));if(!ok)return;
-  NN.done=true;clearInterval(nnTimer);const d=new Set(store.get('nn_done',[]));d.add(NN.k);store.set('nn_done',[...d]);store.set('nn_'+NN.k,null);nnPaint();
+  NN.done=true;clearInterval(nnTimer);const d=new Set(store.get('nn_done',[]));d.add(NN.k);store.set('nn_done',[...d]);store.set('nn_'+NN.k,null);nnPaint();markWinTime();checkAch();
   setTimeout(()=>{confetti();sfx.win();const N=NN.N;
     modal(`<h2>It's ${/^[aeiou]/i.test(NN.p.name)?'an':'a'} ${NN.p.name.toLowerCase()}! 🧩</h2>
     <div class="art" style="display:grid;grid-template-columns:repeat(${N},1fr);aspect-ratio:1;background:#fff">${NN.p.rows.join('').split('').map(ch=>`<i style="background:${ch==='.'?'#fff':NN.p.col[ch]}"></i>`).join('')}</div>
-    <div class="stats">Solved in ${fmt(NN.elapsed)}</div>${noteHTML(NOTES.logic)}
-    <div class="btns">${NN.k<NONO.length-1?`<button class="btn" onclick="closeModal();nnOpen(${NN.k+1})">Next puzzle →</button>`:''}
+    <div class="stats">Solved in ${fmt(NN.elapsed)}</div>${noteHTML(NOTES.logic)}${affMini()}
+    <div class="btns">${(()=>{const nx=NONO.findIndex((x,j)=>j>NN.k&&isOpen(x.unlock)&&!store.get('nn_done',[]).includes(j));return nx>=0?`<button class="btn" onclick="closeModal();nnOpen(${nx})">Next puzzle →</button>`:''})()}
     <button class="btn alt" onclick="closeModal();nnListView()">All puzzles</button><button class="btn alt" onclick="goHome()">Back to games</button></div>`)},400)}
 
 /* ================= boot ================= */
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
 $('#mascotArt').innerHTML=BUNNY_SVG;$('#spBunny').innerHTML=BUNNY_SVG;$('#spTitle').textContent='For '+FOR_NAME+' 💜';
-spawnFloaters();updSndBtns();tickLive();setInterval(tickLive,1000);
+spawnFloaters();updSndBtns();tickLive();setInterval(tickLive,1000);setInterval(()=>{if(!$('#home').hidden)renderDrop()},30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&SND.ctx)SND.ctx.resume()});
 renderHome();show('home');
 </script>
