@@ -198,6 +198,26 @@ svg text.d{font-family:Fredoka,sans-serif;font-weight:700}
 .stamps button.on{box-shadow:0 0 0 3px var(--ink)}
 .gallery{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
 .gallery img{width:100%;aspect-ratio:1;border-radius:10px;border:2px solid var(--line);display:block;object-fit:cover}
+/* ===== Fruit Slash ===== */
+.fswrap{position:relative;border-radius:22px;overflow:hidden;box-shadow:0 5px 0 #18111f;background:#2E2338}
+.fswrap canvas{display:block;width:100%;touch-action:none}
+.fshud{position:absolute;top:10px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;color:#fff;font-weight:800}
+.fshud .sc{font-family:Fredoka;font-size:34px;line-height:1;text-shadow:0 3px 0 rgba(0,0,0,.3)}
+.fshud .sub{font-size:12px;opacity:.8;margin-top:3px}
+.fshud .lv{font-size:22px;letter-spacing:2px}
+.fsover{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#fff;padding:20px;background:rgba(30,20,40,.62);backdrop-filter:blur(3px)}
+.fsover[hidden]{display:none!important}
+.fsover h2{font-size:34px}
+.fsover p{font-weight:700;opacity:.9;margin:6px 0 16px;line-height:1.45}
+.fsover .big{font-size:56px;animation:bob 2s ease-in-out infinite}
+.fsover .btn{display:block;width:230px;margin:8px auto}
+.fsover .btn.alt{background:rgba(255,255,255,.16);color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.fsover .note{color:var(--ink);max-width:300px;margin:10px auto}
+.fsover .aff-mini{color:#fff;opacity:.9;max-width:300px;margin:8px auto 4px}
+.flash{animation:flash .35s}
+@keyframes flash{0%{box-shadow:inset 0 0 0 400px rgba(255,40,60,.45)}100%{box-shadow:inset 0 0 0 400px rgba(255,40,60,0)}}
+.shake{animation:shake .35s}
+@keyframes shake{20%{transform:translate(-8px,4px)}40%{transform:translate(7px,-5px)}60%{transform:translate(-5px,3px)}80%{transform:translate(4px,-2px)}}
 /* modal */
 .modal{position:fixed;inset:0;background:rgba(59,47,63,.55);display:grid;place-items:center;padding:18px;z-index:20}
 .modal[hidden]{display:none}
@@ -259,6 +279,10 @@ svg text.d{font-family:Fredoka,sans-serif;font-weight:700}
     <div class="gicon" style="background:#DDF7EE">🧩</div>
     <div><h3>Picture Logic</h3><p>Use the number clues to shade squares and find the hidden picture.</p><span class="tag" id="nnTag">5 pictures</span></div>
   </button>
+  <button class="gcard" onclick="openFruit()">
+    <div class="gicon" style="background:#FFE1E1">🍉</div>
+    <div><h3>Fruit Slash</h3><p>Swipe to slice the fruit. Don't touch the pepper 🌶️</p><span class="tag" id="fsTag">New game <span class="newdot">NEW</span></span></div>
+  </button>
   <button class="gcard" onclick="openPaint()">
     <div class="gicon" style="background:#FFE3EC">🖌️</div>
     <div><h3>Free Paint</h3><p>A blank canvas, brushes, glitter and stamps. Just vibes.</p><span class="tag" id="fpTag">Your gallery is empty</span></div>
@@ -266,6 +290,24 @@ svg text.d{font-family:Fredoka,sans-serif;font-weight:700}
   <div class="drop" id="drop"></div>
   <button class="trophyBtn" onclick="showTrophies()"><span>🏆 Trophy shelf</span><span id="trophyCount" class="shelf"></span></button>
   <div class="foot" id="foot">Made by Seun in Surulere (the better side of Lagos) 💜</div>
+</section>
+
+<!-- FRUIT SLASH -->
+<section class="view" id="fruit" hidden>
+  <div class="bar"><button class="back" onclick="goHome()">←</button><h2>Fruit Slash</h2><span class="pill" id="fsBestPill">Best 0</span></div>
+  <div class="fswrap" id="fsWrap">
+    <canvas id="fsCv"></canvas>
+    <div class="fshud"><div><div class="sc" id="fsScore">0</div><div class="sub" id="fsSub"></div></div><div class="lv" id="fsLives"></div></div>
+    <div class="fsover" id="fsStart"><div>
+      <div class="big">🍉</div><h2>Fruit Slash</h2>
+      <p>Swipe across the fruit to slice it.<br>Slice several in one swipe for combos 🔥<br>Avoid the 🌶️ and catch 💜 for an extra life.</p>
+      <button class="btn" onclick="fsStart('classic')">🍉 Classic · 3 lives</button>
+      <button class="btn alt" onclick="fsStart('zen')">🧘🏽‍♀️ Zen · 60 seconds, no pepper</button>
+      <p id="fsBests" style="font-size:13px;margin-top:12px"></p>
+    </div></div>
+    <div class="fsover" id="fsEnd" hidden><div id="fsEndIn"></div></div>
+  </div>
+  <p class="hint">Tip: long, fast swipes slice the most fruit.</p>
 </section>
 
 <!-- FREE PAINT -->
@@ -658,7 +700,10 @@ const ACH=[
  ['early','☀️','Early Bird','Win a game before 7am',()=>store.get('f_early',false)],
  ['pops','🎈','Bubble Popper','Pop 25 floating emojis',()=>store.get('c_pops',0)>=25],
  ['bun','🐰','Bunny\'s Bestie','Tap the bunny 20 times',()=>store.get('c_bunny',0)>=20],
- ['love','💌','Self-Love Club','Keep 5 daily reminders',()=>store.get('aff_saved',[]).length>=5]
+ ['love','💌','Self-Love Club','Keep 5 daily reminders',()=>store.get('aff_saved',[]).length>=5],
+ ['juice','🍉','Juice Master','Score 50 in Fruit Slash Classic',()=>store.get('fs_best_classic',0)>=50],
+ ['combo','🌪️','Combo Queen','Slice 4+ fruits in one swipe',()=>store.get('f_combo4',false)],
+ ['zen','🧘🏽‍♀️','Zen Mode','Score 60 in Zen mode',()=>store.get('fs_best_zen',0)>=60]
 ];
 function checkAch(){const got=new Set(store.get('ach',[]));const fresh=ACH.filter(a=>!got.has(a[0])&&a[4]());
   fresh.forEach((a,i)=>{got.add(a[0]);setTimeout(()=>{toast('🏆 Trophy unlocked: '+a[1]+' '+a[2]);tone(988,.25,'triangle',.1);tone(1319,.4,'triangle',.1,.12)},900+i*1900)});
@@ -674,7 +719,7 @@ function showTrophies(){const got=store.get('ach',[]),saved=store.get('aff_saved
 /* ================= HOME ================= */
 function streak(){const days=new Set(store.get('su_days',[]));let n=0;const d=new Date();
   if(!days.has(keyOf(d)))d.setDate(d.getDate()-1);while(days.has(keyOf(d))){n++;d.setDate(d.getDate()-1)}return n}
-function goHome(){clearInterval(suTimer);clearInterval(nnTimer);if(FP.ctx)fpWip();closeModal();renderHome();show('home')}
+function goHome(){if(FS.running){FS.running=false;cancelAnimationFrame(FS.raf)}clearInterval(suTimer);clearInterval(nnTimer);if(FP.ctx)fpWip();closeModal();renderHome();show('home')}
 function renderHome(){
   const h=new Date().getHours();
   const greet=(h<12?'Good morning':h<17?'Hi':'Good evening')+', '+FOR_NAME;
@@ -692,6 +737,7 @@ function renderHome(){
   $('#nnTag').innerHTML=(nd.length?nd.length+'/'+nOpen+' pictures found':nOpen+' pictures')+(nNew?'<span class="newdot">NEW</span>':'');
   const cNew=PAGES.some(p=>recent(p.unlock)&&!cd.includes(p.id));if(cNew)$('#cbTag').innerHTML=$('#cbTag').textContent+'<span class="newdot">NEW</span>';
   $('#cbTag').innerHTML=$('#cbTag').innerHTML.replace('/'+PAGES.length,'/'+availPages().length);
+  const fb=Math.max(store.get('fs_best_classic',0),store.get('fs_best_zen',0));if(fb)$('#fsTag').textContent='Best score: '+fb;
   const art=store.get('art',[]);$('#fpTag').textContent=art.length?art.length+' painting'+(art.length>1?'s':'')+' in your gallery':'Your gallery is empty';
   $('#affName').textContent=FOR_NAME.toUpperCase();renderAff();renderDrop();checkAch();
 }
@@ -812,6 +858,100 @@ function cbDone(){const d=new Set(store.get('cb_done',[]));d.add(CB.page.id);sto
   modal(`<h2>Masterpiece 🖼️</h2><div class="art">${pageSVG(CB.page,CB.fills,false)}</div>${noteHTML(NOTES.color)}${affMini()}
   <div class="btns"><button class="btn" onclick="closeModal();cbList()">Colour another page</button>
   <button class="btn alt" onclick="closeModal()">Keep painting this one</button><button class="btn alt" onclick="goHome()">Back to games</button></div>`)}
+
+/* ================= FRUIT SLASH ================= */
+function noise(d=.15,vol=.2,freq=1800,q=1){if(!SND.on)return;const c=ac();if(!c)return;
+  const len=Math.floor(c.sampleRate*d),buf=c.createBuffer(1,len,c.sampleRate),data=buf.getChannelData(0);
+  for(let i=0;i<len;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/len,2);
+  const src=c.createBufferSource();src.buffer=buf;const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=freq;f.Q.value=q;
+  const g=c.createGain();g.gain.value=vol;src.connect(f).connect(g).connect(c.destination);src.start()}
+const FRUITS=[['🍉','#FF4D6D'],['🥭','#FFB703'],['🍍','#FFD166'],['🍊','#FF8C1A'],['🍌','#FFE066'],['🍇','#9B5DE5'],['🥥','#F2EBE3'],['🍎','#E63946'],['🍓','#FF3355'],['🍑','#FFA07A'],['🥝','#8AC926']];
+const FS={running:false,raf:0};
+function openFruit(){show('fruit');fsSize();$('#fsStart').hidden=false;$('#fsEnd').hidden=true;fsHud();fsBests();fsIdle()}
+function fsBests(){const c=store.get('fs_best_classic',0),z=store.get('fs_best_zen',0);
+  $('#fsBests').textContent=(c||z)?`Best · Classic ${c} · Zen ${z}`:'';$('#fsBestPill').textContent='Best '+Math.max(c,z)}
+function fsSize(){const cv=$('#fsCv'),w=cv.parentElement.clientWidth||360,h=Math.round(Math.min(window.innerHeight*.7,w*1.35));
+  const dpr=Math.min(2,window.devicePixelRatio||1);cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+'px';FS.W=w;FS.H=h;FS.dpr=dpr;
+  FS.ctx=cv.getContext('2d');FS.ctx.setTransform(dpr,0,0,dpr,0,0);FS.R=Math.max(24,w*.075)}
+function fsIdle(){FS.items=[];FS.halves=[];FS.parts=[];FS.texts=[];FS.trail=[];fsDraw()}
+function fsStart(mode){cancelAnimationFrame(FS.raf);fsSize();ac();
+  Object.assign(FS,{mode,score:0,lives:3,time:60,items:[],halves:[],parts:[],texts:[],trail:[],spawnT:.6,running:true,last:performance.now(),elapsed:0,combo:0,comboT:0,maxCombo:0,sliced:0});
+  $('#fsStart').hidden=true;$('#fsEnd').hidden=true;fsHud();sfx.pop();FS.raf=requestAnimationFrame(fsLoop)}
+function fsHud(){$('#fsScore').textContent=FS.score||0;
+  if(FS.mode==='zen'){$('#fsLives').textContent='⏱ '+Math.ceil(Math.max(0,FS.time||0));$('#fsSub').textContent='Zen mode'}
+  else{$('#fsLives').textContent='💜'.repeat(Math.max(0,FS.lives??3))+'🤍'.repeat(3-Math.max(0,Math.min(3,FS.lives??3)));$('#fsSub').textContent='Best '+store.get('fs_best_classic',0)}}
+function fsSpawn(){const {W,H,R}=FS,lvl=Math.min(1,FS.elapsed/90),n=1+Math.floor(Math.random()*(1+lvl*3+(FS.score>20?1:0)));
+  for(let i=0;i<n;i++){const x=W*(.15+Math.random()*.7),g=H*1.45,peak=H*(.5+Math.random()*.35);
+    let kind='fruit',em,col;const r=Math.random();
+    if(FS.mode==='classic'&&r<.1+lvl*.1){kind='pepper';em='🌶️';col='#E63946'}
+    else if(FS.mode==='classic'&&FS.lives<3&&r>.975){kind='heart';em='💜';col='#C77DFF'}
+    else{[em,col]=pick(FRUITS)}
+    FS.items.push({x,y:H+R,vx:(W/2-x)*(.25+Math.random()*.6)/1.2+(Math.random()-.5)*W*.15,vy:-Math.sqrt(2*g*peak),g,
+      rot:Math.random()*6,vr:(Math.random()-.5)*5,em,col,kind,delay:i*.12})}
+  noise(.2,.06,500,.6)}
+function fsLoop(now){const dt=Math.min(.033,(now-FS.last)/1000);FS.last=now;if(!FS.running)return;FS.elapsed+=dt;
+  if(FS.mode==='zen'){FS.time-=dt;if(FS.time<=0){fsHud();return fsEnd()}}
+  FS.spawnT-=dt;if(FS.spawnT<=0){fsSpawn();FS.spawnT=Math.max(.65,1.45-FS.elapsed/80)*(FS.mode==='zen'?.8:1)}
+  const {H,R}=FS;
+  for(const it of FS.items){if(it.delay>0){it.delay-=dt;continue}it.vy+=it.g*dt;it.x+=it.vx*dt;it.y+=it.vy*dt;it.rot+=it.vr*dt;
+    if(it.y>H+R*2&&it.vy>0&&!it.gone){it.gone=true;if(it.kind==='fruit'&&FS.mode==='classic'){FS.lives--;fsText('✕',it.x,H-30,'#FF6B6B',1.4);tone(330,.25,'triangle',.1,0,160);fsHud();if(FS.lives<=0)return fsEnd()}}}
+  FS.items=FS.items.filter(i=>!i.gone&&!i.cut);
+  for(const h of FS.halves){h.vy+=h.g*dt;h.x+=h.vx*dt;h.y+=h.vy*dt;h.rot+=h.vr*dt}FS.halves=FS.halves.filter(h=>h.y<H+R*3);
+  for(const p of FS.parts){p.vy+=900*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt}FS.parts=FS.parts.filter(p=>p.life>0);
+  for(const t of FS.texts){t.y-=40*dt;t.life-=dt}FS.texts=FS.texts.filter(t=>t.life>0);
+  if(FS.comboT>0){FS.comboT-=dt;if(FS.comboT<=0)fsCombo()}
+  const tn=performance.now();FS.trail=FS.trail.filter(p=>tn-p.t<160);
+  fsDraw();if(FS.mode==='zen')fsHud();FS.raf=requestAnimationFrame(fsLoop)}
+function fsDraw(){const {ctx,W,H,R}=FS;if(!ctx)return;
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#3A2A4D');g.addColorStop(1,'#1F1629');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.globalAlpha=.06;ctx.fillStyle='#fff';for(let y=30;y<H;y+=46)ctx.fillRect(0,y,W,2);ctx.globalAlpha=1;
+  ctx.textAlign='center';ctx.textBaseline='middle';const fs=R*2.1;ctx.font=fs+'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+  for(const p of FS.parts){ctx.globalAlpha=Math.max(0,p.life/p.max);ctx.fillStyle=p.col;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.28);ctx.fill()}ctx.globalAlpha=1;
+  for(const h of FS.halves){ctx.save();ctx.translate(h.x,h.y);ctx.rotate(h.rot);ctx.save();ctx.rotate(h.cut);ctx.beginPath();
+    ctx.rect(-R*1.6,h.side<0?-R*1.6:0,R*3.2,R*1.6);ctx.clip();ctx.rotate(-h.cut);ctx.fillText(h.em,0,0);ctx.restore();ctx.restore()}
+  for(const it of FS.items){if(it.delay>0)continue;ctx.save();ctx.translate(it.x,it.y);ctx.rotate(it.rot);
+    if(it.kind==='pepper'){ctx.shadowColor='#ff2a3d';ctx.shadowBlur=18}if(it.kind==='heart'){ctx.shadowColor='#e0aaff';ctx.shadowBlur=22}
+    ctx.fillText(it.em,0,0);ctx.restore()}
+  const tr=FS.trail;if(tr.length>1){const tn=performance.now();ctx.lineCap='round';ctx.lineJoin='round';
+    for(let i=1;i<tr.length;i++){const a=1-(tn-tr[i].t)/160;ctx.strokeStyle=`rgba(255,255,255,${Math.max(0,a)})`;ctx.lineWidth=2+7*a;
+      ctx.shadowColor='#E0AAFF';ctx.shadowBlur=14;ctx.beginPath();ctx.moveTo(tr[i-1].x,tr[i-1].y);ctx.lineTo(tr[i].x,tr[i].y);ctx.stroke()}ctx.shadowBlur=0}
+  for(const t of FS.texts){ctx.globalAlpha=Math.min(1,t.life*2);ctx.font=`700 ${22*t.s}px Fredoka,sans-serif`;ctx.fillStyle=t.col;
+    ctx.strokeStyle='rgba(0,0,0,.35)';ctx.lineWidth=4;ctx.strokeText(t.txt,t.x,t.y);ctx.fillText(t.txt,t.x,t.y)}ctx.globalAlpha=1}
+function fsText(txt,x,y,col='#fff',s=1){FS.texts.push({txt,x:Math.min(FS.W-40,Math.max(40,x)),y,col,s,life:.9})}
+function fsSlice(it,ang){it.cut=true;const sp=180;
+  [-1,1].forEach(side=>FS.halves.push({x:it.x,y:it.y,vx:it.vx*.6+Math.cos(ang+Math.PI/2)*sp*side,vy:Math.min(it.vy,0)*.3+Math.sin(ang+Math.PI/2)*sp*side-60,
+    g:it.g,rot:it.rot,vr:it.vr+side*3,cut:ang-it.rot,side,em:it.em}));
+  for(let i=0;i<14;i++){const a=Math.random()*6.28,v=80+Math.random()*260;FS.parts.push({x:it.x,y:it.y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-80,r:2+Math.random()*4,col:it.col,life:.5+Math.random()*.4,max:.9})}
+  if(it.kind==='pepper'){FS.lives--;const w=$('#fsWrap');w.classList.remove('flash','shake');void w.offsetWidth;w.classList.add('flash','shake');
+    tone(110,.45,'sawtooth',.09);noise(.4,.3,300,.7);buzz([40,30,60]);fsText('Ouch! 🌶️',it.x,it.y-30,'#FF6B6B',1.3);fsHud();if(FS.lives<=0){fsHud();setTimeout(fsEnd,250)}return}
+  if(it.kind==='heart'){FS.lives=Math.min(3,FS.lives+1);fsText('+1 life 💜',it.x,it.y-30,'#E0AAFF',1.2);tone(880,.3,'sine',.12);tone(1320,.4,'sine',.1,.1);fsHud();return}
+  FS.score++;FS.sliced++;FS.combo++;FS.comboT=.22;noise(.12,.35,2400,.8);tone(320,.12,'sine',.12,0,120);buzz(8);
+  fsText('+1',it.x,it.y-26,it.col);fsHud()}
+function fsCombo(){if(FS.combo>=3){const b=FS.combo;FS.score+=b;fsText('Combo x'+b+'! +'+b,FS.W/2,FS.H*.35,'#FECA57',1.6);
+    [659,784,988,1319].slice(0,Math.min(4,b-1)).forEach((f,i)=>tone(f,.25,'triangle',.1,i*.06));if(b>=4)store.set('f_combo4',true);fsHud()}
+  FS.maxCombo=Math.max(FS.maxCombo,FS.combo);FS.combo=0}
+(function(){const cv=document.getElementById('fsCv');let lastWhoosh=0;
+  const pt=e=>{const r=cv.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top,t:performance.now()}};
+  cv.addEventListener('pointerdown',e=>{if(!FS.running)return;e.preventDefault();FS.down=true;FS.trail=[pt(e)];try{cv.setPointerCapture(e.pointerId)}catch(_){}});
+  cv.addEventListener('pointermove',e=>{if(!FS.running||!FS.down)return;const p=pt(e),q=FS.trail[FS.trail.length-1];FS.trail.push(p);if(!q)return;
+    const dx=p.x-q.x,dy=p.y-q.y,len=Math.hypot(dx,dy);if(len<4)return;
+    if(len>18&&p.t-lastWhoosh>220){lastWhoosh=p.t;noise(.16,.08,1200,.5)}
+    const ang=Math.atan2(dy,dx);
+    for(const it of FS.items){if(it.cut||it.delay>0)continue;
+      const t=Math.max(0,Math.min(1,((it.x-q.x)*dx+(it.y-q.y)*dy)/(len*len))),cx=q.x+dx*t,cy=q.y+dy*t;
+      if(Math.hypot(it.x-cx,it.y-cy)<FS.R*1.05)fsSlice(it,ang)}});
+  const up=()=>{FS.down=false};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up)})();
+function fsEnd(){if(!FS.running)return;FS.running=false;cancelAnimationFrame(FS.raf);if(FS.combo)fsCombo();
+  const k='fs_best_'+FS.mode,prev=store.get(k,0),nb=FS.score>prev;if(nb)store.set(k,FS.score);bump('c_fs');markWinTime();checkAch();fsBests();
+  const lines=FS.score>=40?['Juice queen! Nothing stood a chance 🍉','That was elite slicing 🔪✨']:FS.score>=15?['Smooth! Your swipes are getting sharper 😎','Nice one! Go again, beat it 💪🏽']:['Warm-up round. The next one is yours 💜','Good start! Again, again 🔁'];
+  $('#fsEndIn').innerHTML=`<div class="big">${nb&&FS.score?'🏆':'🍉'}</div><h2>${FS.score} slice${FS.score===1?'':'s'}</h2>
+    <p style="margin:4px 0 6px">${nb&&FS.score?'New best score! 🎉':'Best: '+prev}${FS.maxCombo>=3?' · Biggest combo x'+FS.maxCombo:''}</p>
+    <div class="note">${pick(lines)}<span>— ${FROM_NAME}</span></div>${affMini()}
+    <button class="btn" onclick="fsStart('${FS.mode}')">Play again</button>
+    <button class="btn alt" onclick="fsStart('${FS.mode==='zen'?'classic':'zen'}')">Try ${FS.mode==='zen'?'Classic':'Zen'} mode</button>
+    <button class="btn alt" onclick="goHome()">Back to games</button>`;
+  $('#fsEnd').hidden=false;if(nb&&FS.score){confetti();sfx.win()}else tone(523,.3,'triangle',.1)}
+window.addEventListener('resize',()=>{if(!$('#fruit').hidden&&!FS.running){fsSize();fsDraw()}});
 
 /* ================= FREE PAINT ================= */
 const FP={tool:'brush',col:'#A55EEA',size:14,stamp:'⭐',undo:[],ctx:null,last:null,drawing:false};
