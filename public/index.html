@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>May's Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFF7F0;--ink:#3B2F3F;--card:#fff;--accent:#A55EEA;--coral:#FF7A85;--muted:#8a7d8f;--line:#EADFEF;--soft:#F7F0FA}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif}
+button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none}
+h1,h2,h3{font-family:Fredoka,Nunito,sans-serif;margin:0}
+.wrap{max-width:520px;margin:0 auto;padding:18px 16px 40px}
+[hidden]{display:none!important}
+/* top bar */
+.bar{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.bar h2{font-size:22px;flex:1}
+.back{width:40px;height:40px;border-radius:12px;background:var(--card);font-size:20px;box-shadow:0 2px 0 var(--line)}
+.pill{background:var(--card);border-radius:999px;padding:7px 12px;font-weight:800;font-size:14px;box-shadow:0 2px 0 var(--line)}
+/* home */
+.hello{padding:8px 2px 18px}
+.hello h1{font-size:34px;line-height:1.1}
+.hello p{margin:6px 0 0;color:var(--muted);font-weight:700}
+.streak{display:inline-flex;gap:6px;align-items:center;margin-top:12px;background:#FFE9D6;color:#B35A1F;border-radius:999px;padding:6px 12px;font-weight:800;font-size:14px}
+.gcard{display:flex;gap:14px;align-items:center;width:100%;text-align:left;background:var(--card);border-radius:22px;padding:16px;margin-bottom:14px;box-shadow:0 4px 0 var(--line);transition:transform .12s}
+.gcard:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.gicon{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;font-size:32px;flex:none}
+.gcard h3{font-size:20px}
+.gcard p{margin:3px 0 0;color:var(--muted);font-size:14px;font-weight:700}
+.gcard .tag{display:inline-block;margin-top:7px;font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--soft);color:var(--accent)}
+.foot{text-align:center;color:var(--muted);font-size:13px;font-weight:700;margin-top:26px}
+/* tabs */
+.tabs{display:flex;gap:6px;background:var(--card);padding:5px;border-radius:14px;box-shadow:0 2px 0 var(--line);margin-bottom:12px}
+.tabs button{flex:1;padding:9px 4px;border-radius:10px;font-weight:800;font-size:13px;color:var(--muted)}
+.tabs button.on{background:var(--accent);color:#fff}
+.tabs button .ck{font-size:11px}
+/* sudoku */
+.sugrid{display:grid;width:100%;aspect-ratio:1;background:var(--card);border:3px solid var(--ink);border-radius:14px;overflow:hidden;user-select:none}
+.cell{position:relative;border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:grid;place-items:center;padding:0;background:#fff}
+.cell.bR{border-right:2.5px solid var(--ink)}
+.cell.bB{border-bottom:2.5px solid var(--ink)}
+.cell.peer{background:#FBF6FD}
+.cell.sel{background:#F1E4FB}
+.cell.same .dab{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--ink)}
+.dab{width:72%;height:72%;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:clamp(11px,3.6vw,17px);animation:pop .18s ease-out}
+.dab.tile{border-radius:22%;width:80%;height:80%;animation:none}
+.cell.bad .dab{outline:3px dashed #E0263C;outline-offset:1px}
+.nonum .dab b{display:none}
+@keyframes pop{from{transform:scale(.4)}to{transform:scale(1)}}
+.pal{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0 8px}
+.sw{width:44px;height:44px;border-radius:50%;font-weight:800;font-size:16px;box-shadow:0 3px 0 rgba(0,0,0,.15);transition:transform .1s,opacity .2s}
+.sw:active{transform:scale(.9)}
+.sw.full{opacity:.28}
+.nonum .sw b{display:none}
+.tools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.tool{background:var(--card);border-radius:12px;padding:9px 13px;font-weight:800;font-size:14px;box-shadow:0 2px 0 var(--line)}
+.tool.on{background:var(--ink);color:#fff}
+.hint{color:var(--muted);font-size:13px;font-weight:700;text-align:center;margin:12px 6px 0;line-height:1.45}
+/* colouring */
+.pages{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pcard{background:var(--card);border-radius:18px;padding:10px;box-shadow:0 3px 0 var(--line);text-align:left}
+.pcard svg{width:100%;display:block;border-radius:12px;border:2px solid var(--line)}
+.pcard h3{font-size:15px;margin-top:8px}
+.pcard small{color:var(--muted);font-weight:800}
+.canvas{background:#fff;border-radius:18px;padding:8px;box-shadow:0 4px 0 var(--line)}
+.canvas svg{width:100%;display:block;touch-action:manipulation}
+svg .r{stroke:var(--ink);stroke-width:3;stroke-linejoin:round;cursor:pointer;transition:fill .15s}
+svg .d{fill:var(--ink);pointer-events:none}
+svg .dl{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;pointer-events:none}
+svg text.d{font-family:Fredoka,sans-serif;font-weight:700}
+.cpal{display:grid;grid-template-columns:repeat(9,1fr);gap:7px;margin:14px 0 10px}
+.cpal button{aspect-ratio:1;border-radius:50%;box-shadow:inset 0 0 0 2px rgba(0,0,0,.08)}
+.cpal button.on{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--ink)}
+.cur{display:flex;align-items:center;gap:8px;justify-content:center;font-weight:800;color:var(--muted);font-size:14px;margin-top:10px}
+.cur i{width:20px;height:20px;border-radius:50%;display:inline-block;box-shadow:inset 0 0 0 2px rgba(0,0,0,.1)}
+/* nonogram */
+.nlist{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ncard{background:var(--card);border-radius:16px;padding:10px;box-shadow:0 3px 0 var(--line);font-weight:800;font-size:14px}
+.ncard .mini{display:grid;aspect-ratio:1;margin-bottom:7px;border-radius:8px;overflow:hidden;background:var(--soft)}
+.ncard .q{display:grid;place-items:center;aspect-ratio:1;margin-bottom:7px;border-radius:8px;background:var(--soft);font-family:Fredoka;font-size:30px;color:#cdbfd6}
+.nboard{display:grid;justify-content:center;user-select:none;touch-action:none;margin:6px auto 0}
+.cl{font-weight:800;color:var(--ink);font-size:12px;transition:opacity .2s}
+.cl.ok{opacity:.3}
+.cl.col{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding-bottom:4px;line-height:1.15}
+.cl.row{display:flex;justify-content:flex-end;align-items:center;gap:5px;padding-right:6px;white-space:nowrap}
+.nc{background:#fff;border-right:1px solid #DCCFE4;border-bottom:1px solid #DCCFE4;display:grid;place-items:center;font-size:12px;color:#c7b8cf;font-weight:800;transition:background .08s}
+.nc.f{background:#5B4A66}
+.nc.x::after{content:"✕"}
+.nc.b5{border-right:2px solid var(--ink)}
+.nc.r5{border-bottom:2px solid var(--ink)}
+.nc.t{border-top:3px solid var(--ink)}.nc.l{border-left:3px solid var(--ink)}
+.nc.rr{border-right:3px solid var(--ink)}.nc.bb{border-bottom:3px solid var(--ink)}
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(59,47,63,.55);display:grid;place-items:center;padding:18px;z-index:20}
+.modal[hidden]{display:none}
+.sheet{background:var(--card);border-radius:26px;padding:20px;max-width:400px;width:100%;text-align:center;animation:rise .3s ease-out;max-height:92vh;overflow:auto}
+@keyframes rise{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+.sheet h2{font-size:24px}
+.sheet .art{margin:14px auto;width:78%;border-radius:18px;overflow:hidden;border:3px solid var(--ink);animation:reveal 1.1s ease-out}
+.sheet .art svg{display:block;width:100%}
+@keyframes reveal{from{clip-path:circle(0% at 50% 50%)}to{clip-path:circle(75% at 50% 50%)}}
+.note{background:#FFF1F6;border-radius:16px;padding:12px 14px;font-weight:700;margin:10px 0 4px;line-height:1.45;text-align:left}
+.note span{display:block;margin-top:6px;color:var(--coral);font-family:Fredoka;font-weight:600}
+.stats{color:var(--muted);font-weight:800;font-size:14px}
+.btns{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.btn{background:var(--accent);color:#fff;border-radius:14px;padding:13px;font-weight:800;font-size:15px;box-shadow:0 3px 0 #7D3DBA}
+.btn.alt{background:var(--soft);color:var(--ink);box-shadow:0 3px 0 var(--line)}
+.conf{position:fixed;top:-20px;width:10px;height:14px;z-index:30;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;font-weight:800;z-index:40;font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HOME -->
+<section class="view" id="home">
+  <div class="hello">
+    <h1 id="hiTitle">Hi May 🐰</h1>
+    <p id="hiSub">Pick a game. No ads, no rush.</p>
+    <div class="streak" id="streak" hidden></div>
+  </div>
+  <button class="gcard" onclick="openSudoku()">
+    <div class="gicon" style="background:#F1E4FB">🎨</div>
+    <div><h3>Paint Sudoku</h3><p>Sudoku with colours. Solve it to reveal today's painting.</p><span class="tag" id="suTag">New puzzle today</span></div>
+  </button>
+  <button class="gcard" onclick="openColor()">
+    <div class="gicon" style="background:#FFE9D6">🖍️</div>
+    <div><h3>Colouring Book</h3><p>Tap to fill. Pick your own colours, take your time.</p><span class="tag" id="cbTag">5 pages</span></div>
+  </button>
+  <button class="gcard" onclick="openLogic()">
+    <div class="gicon" style="background:#DDF7EE">🧩</div>
+    <div><h3>Picture Logic</h3><p>Use the number clues to shade squares and find the hidden picture.</p><span class="tag" id="nnTag">5 pictures</span></div>
+  </button>
+  <div class="foot" id="foot">Made by Seun in Surulere (the better side of Lagos) 💜</div>
+</section>
+
+<!-- SUDOKU -->
+<section class="view" id="sudoku" hidden>
+  <div class="bar"><button class="back" onclick="goHome()">←</button><h2>Paint Sudoku</h2><span class="pill" id="suTime">0:00</span></div>
+  <div class="tabs" id="suTabs"></div>
+  <div class="sugrid" id="suGrid"></div>
+  <div class="pal" id="suPal"></div>
+  <div class="tools">
+    <button class="tool" onclick="suErase()">⌫ Erase</button>
+    <button class="tool" onclick="suHint()">💡 Hint</button>
+    <button class="tool" id="numBtn" onclick="toggleNums()">🔢 Numbers</button>
+    <button class="tool" onclick="suRestart()">↺ Restart</button>
+    <button class="tool" onclick="startSudoku(SU.level,true)">🎲 Practice</button>
+  </div>
+  <p class="hint" id="suHelp">Each colour appears once in every row, column and box. Tap a square, then tap a paint.</p>
+</section>
+
+<!-- COLOURING -->
+<section class="view" id="color" hidden>
+  <div class="bar"><button class="back" id="cbBack">←</button><h2 id="cbTitle">Colouring Book</h2></div>
+  <div id="cbList" class="pages"></div>
+  <div id="cbPage" hidden>
+    <div class="canvas" id="cbCanvas"></div>
+    <div class="cpal" id="cbPal"></div>
+    <div class="tools">
+      <button class="tool" onclick="cbUndo()">↶ Undo</button>
+      <button class="tool" onclick="cbClear()">🧽 Start over</button>
+      <button class="tool on" onclick="cbDone()">✨ I'm done</button>
+    </div>
+    <div class="cur">Painting with <i id="cbCur"></i></div>
+  </div>
+</section>
+
+<!-- NONOGRAM -->
+<section class="view" id="logic" hidden>
+  <div class="bar"><button class="back" id="nnBack">←</button><h2 id="nnTitle">Picture Logic</h2><span class="pill" id="nnTime" hidden>0:00</span></div>
+  <div id="nnList">
+    <div class="nlist" id="nnCards"></div>
+    <p class="hint">The numbers show runs of shaded squares in each row and column, in order, with at least one gap between runs. Shade the right squares to find the picture.</p>
+  </div>
+  <div id="nnPlay" hidden>
+    <div class="tabs" style="max-width:260px;margin:0 auto 10px">
+      <button id="mFill" class="on" onclick="setMode(1)">■ Shade</button>
+      <button id="mMark" onclick="setMode(2)">✕ Mark empty</button>
+    </div>
+    <div class="nboard" id="nnBoard"></div>
+    <div class="tools" style="margin-top:14px"><button class="tool" onclick="nnClear()">🧽 Clear</button></div>
+    <p class="hint">Drag across squares to shade several at once. Use ✕ to mark squares you know are empty.</p>
+  </div>
+</section>
+
+</div>
+<div class="modal" id="modal" hidden><div class="sheet" id="sheet"></div></div>
+
+<script>
+/* ================= Personal settings (edit freely) ================= */
+const FOR_NAME = "May";
+const FROM_NAME = "Seun";
+const NOTES = {
+  sudoku: [
+    "Solved! Leaderboard champion behaviour, as usual 🏆",
+    "Okay, that was fast. Even for a Yaba girl 😌",
+    "Painting complete. Picasso who? 🎨",
+    "You make this look easy. Same time tomorrow?"
+  ],
+  color: [
+    "This one is going on the fridge 🖼️",
+    "Honestly beautiful. You should sign it.",
+    "Your colour choices are perfect. Surulere approves 💜"
+  ],
+  logic: [
+    "Picture unlocked! Big brain 🧠",
+    "Cracked it. Nothing gets past you 🕵🏽‍♀️",
+    "Another one solved. You're unstoppable."
+  ]
+};
+/* =================================================================== */
+
+const store={get(k,d){try{const v=localStorage.getItem('mg_'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+             set(k,v){try{localStorage.setItem('mg_'+k,JSON.stringify(v))}catch(e){}}};
+const $=s=>document.querySelector(s);
+const keyOf=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const todayKey=()=>keyOf(new Date());
+const dayNum=()=>{const d=new Date();return Math.floor(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5)};
+const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function hashStr(s){let h=2166136261;for(const ch of s){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function rngF(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function shuffle(a,rng){for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function show(id){document.querySelectorAll('.view').forEach(v=>v.hidden=v.id!==id);window.scrollTo(0,0)}
+function modal(html){$('#sheet').innerHTML=html;$('#modal').hidden=false}
+function closeModal(){$('#modal').hidden=true}
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
+function confetti(){const cols=['#FF6B6B','#FECA57','#1DD1A1','#5F7FFF','#A55EEA','#FF8ED4'];
+  for(let i=0;i<70;i++){const s=document.createElement('i');s.className='conf';s.style.left=Math.random()*100+'vw';
+  s.style.background=pick(cols);s.style.borderRadius=Math.random()<.5?'50%':'2px';s.style.animationDuration=(1.6+Math.random()*1.8)+'s';
+  s.style.animationDelay=(Math.random()*.4)+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),4000)}}
+function noteHTML(list){return `<div class="note">${pick(list)}<span>— ${FROM_NAME}</span></div>`}
+
+/* ================= Pictures (shared by all three games) ================= */
+const R=(t,a,c)=>({r:1,t,a,c});
+const D=(t,a)=>({t,a,cls:'d'});
+const L=(t,a)=>({t,a,cls:'dl'});
+const T=(a,txt)=>({t:'text',a,cls:'d',txt});
+function flowers(){const out=[];
+  [[75,165,'#FF6B6B'],[150,130,'#A55EEA'],[225,170,'#FF8ED4']].forEach(([x,y,c])=>{
+    out.push(R('rect',`x="${x-4}" y="${y}" width="8" height="${270-y}" rx="3"`,'#1DD1A1'));
+    out.push(R('path',`d="M${x+3} ${y+62} Q${x+30} ${y+38} ${x+44} ${y+56} Q${x+24} ${y+76} ${x+3} ${y+62}Z"`,'#10AC84'));
+    for(let k=0;k<6;k++){const an=k*Math.PI/3;out.push(R('circle',`cx="${(x+Math.cos(an)*21).toFixed(1)}" cy="${(y+Math.sin(an)*21).toFixed(1)}" r="15"`,c))}
+    out.push(R('circle',`cx="${x}" cy="${y}" r="13"`,'#FECA57'));
+  });return out}
+const PAGES=[
+ {id:'bunny',title:'Rabbit Teeth 🐰',parts:[
+  R('rect','x="0" y="0" width="300" height="300"','#DFF3FF'),
+  R('path','d="M0 245 Q150 215 300 245 L300 300 L0 300Z"','#9BE29B'),
+  R('ellipse','cx="118" cy="72" rx="22" ry="55"','#F4EEF7'),R('ellipse','cx="182" cy="72" rx="22" ry="55"','#F4EEF7'),
+  R('ellipse','cx="118" cy="78" rx="10" ry="38"','#FFB3C7'),R('ellipse','cx="182" cy="78" rx="10" ry="38"','#FFB3C7'),
+  R('ellipse','cx="150" cy="218" rx="70" ry="50"','#F4EEF7'),
+  R('ellipse','cx="112" cy="262" rx="24" ry="12"','#F4EEF7'),R('ellipse','cx="188" cy="262" rx="24" ry="12"','#F4EEF7'),
+  R('circle','cx="150" cy="148" r="56"','#F4EEF7'),
+  R('circle','cx="114" cy="164" r="10"','#FFB3C7'),R('circle','cx="186" cy="164" r="10"','#FFB3C7'),
+  R('path','d="M142 152 L158 152 L150 162Z"','#FF7A9C'),
+  R('rect','x="142" y="172" width="8" height="13" rx="2"','#FFFFFF'),R('rect','x="150" y="172" width="8" height="13" rx="2"','#FFFFFF'),
+  R('path','d="M232 262 L262 196 L274 204 Z"','#FF9F43'),
+  R('path','d="M266 199 Q268 180 284 176 Q282 194 272 204Z"','#1DD1A1'),
+  D('circle','cx="130" cy="138" r="6"'),D('circle','cx="170" cy="138" r="6"'),
+  L('path','d="M150 162 Q150 170 140 172 M150 162 Q150 170 160 172"')]},
+ {id:'puppy',title:'Puppy 🐶',parts:[
+  R('rect','x="0" y="0" width="300" height="300"','#FFF1C9'),
+  R('path','d="M0 250 L300 250 L300 300 L0 300Z"','#F7C59F'),
+  R('path','d="M98 200 Q86 290 108 300 L192 300 Q214 290 202 200Z"','#C68B59'),
+  R('path','d="M96 92 Q56 98 62 172 Q84 184 106 150Z"','#7A4E2D'),R('path','d="M204 92 Q244 98 238 172 Q216 184 194 150Z"','#7A4E2D'),
+  R('ellipse','cx="150" cy="135" rx="60" ry="58"','#C68B59'),
+  R('ellipse','cx="176" cy="120" rx="18" ry="16"','#7A4E2D'),
+  R('ellipse','cx="150" cy="166" rx="32" ry="22"','#F3D9B1'),
+  R('ellipse','cx="150" cy="154" rx="11" ry="8"','#3B2F3F'),
+  R('path','d="M141 180 Q150 204 159 180Z"','#FF7A9C'),
+  R('rect','x="104" y="192" width="92" height="16" rx="8"','#FF6B6B'),
+  R('circle','cx="150" cy="219" r="11"','#FECA57'),
+  R('circle','cx="248" cy="256" r="26"','#5F7FFF'),
+  R('path','d="M223 250 Q248 264 273 250 L273 262 Q248 276 223 262Z"','#FFFFFF'),
+  D('circle','cx="128" cy="122" r="6"'),D('circle','cx="176" cy="122" r="6"'),
+  L('path','d="M150 162 L150 178 M150 178 Q141 184 133 177 M150 178 Q159 184 167 177"')]},
+ {id:'drink',title:'Purple Drink Break 🍇',parts:[
+  R('rect','x="0" y="0" width="300" height="300"','#F3E8FF'),
+  R('rect','x="0" y="232" width="300" height="68"','#FFD6A5'),
+  R('rect','x="122" y="38" width="56" height="24" rx="5"','#5B2C83'),
+  R('path','d="M125 60 L175 60 L175 90 Q205 110 205 150 L205 225 Q205 235 195 235 L105 235 Q95 235 95 225 L95 150 Q95 110 125 90Z"','#8E44AD'),
+  R('rect','x="105" y="140" width="90" height="56" rx="8"','#FFFFFF'),
+  R('path','d="M150 188 C128 172 134 154 150 166 C166 154 172 172 150 188Z"','#FF6B6B'),
+  R('path','d="M218 160 L272 160 L263 234 L227 234Z"','#E8F7FF'),
+  R('path','d="M221 186 L269 186 L263 234 L227 234Z"','#A55EEA'),
+  R('path','d="M252 112 L260 114 L250 200 L243 199Z"','#FF8ED4'),
+  R('circle','cx="48" cy="216" r="14"','#4A235A'),R('circle','cx="76" cy="220" r="14"','#4A235A'),R('circle','cx="60" cy="194" r="14"','#4A235A'),
+  R('path','d="M60 180 Q70 160 92 162 Q82 180 60 180Z"','#1DD1A1'),
+  T('x="150" y="160" font-size="13" text-anchor="middle"',FOR_NAME.toUpperCase()+"'S")]},
+ {id:'ewa',title:'Ewa Agoyin & Bread 🍛',parts:[
+  R('rect','x="0" y="0" width="300" height="300"','#FFF4E0'),
+  R('rect','x="0" y="200" width="300" height="100"','#FF6B6B'),
+  R('ellipse','cx="130" cy="210" rx="110" ry="52"','#FFFFFF'),
+  R('ellipse','cx="130" cy="208" rx="86" ry="38"','#F1EEF5'),
+  R('path','d="M62 205 Q130 150 198 205 Q130 232 62 205Z"','#A0522D'),
+  R('path','d="M88 190 Q130 160 172 190 Q130 202 88 190Z"','#C0392B'),
+  R('path','d="M200 150 L200 98 Q200 64 241 64 Q282 64 282 98 L282 150Z"','#E67E22'),
+  R('path','d="M208 150 L208 104 Q208 80 231 80 Q254 80 254 104 L254 150Z"','#FFE8B0'),
+  L('path','d="M110 150 q-8 -12 0 -24 q8 -12 0 -24 M140 142 q-8 -12 0 -24 q8 -12 0 -24 M168 150 q-8 -12 0 -24"')]},
+ {id:'garden',title:'Flower Garden 🌼',parts:[
+  R('rect','x="0" y="0" width="300" height="300"','#DFF3FF'),
+  R('path','d="M0 220 Q75 200 150 220 Q225 240 300 215 L300 300 L0 300Z"','#9BE29B'),
+  R('circle','cx="255" cy="50" r="28"','#FECA57'),
+  R('path','d="M30 80 Q30 60 52 62 Q60 44 82 50 Q100 42 108 62 Q126 64 124 80Z"','#FFFFFF'),
+  ...flowers()]}
+];
+function pageSVG(page,fills,painted){let i=0;
+  const inner=page.parts.map(p=>{
+    if(p.r){const f=painted?p.c:(fills&&fills[i])||'#FFFFFF';return `<${p.t} class="r" data-i="${i++}" fill="${f}" ${p.a}/>`}
+    if(p.txt!=null) return `<text class="${p.cls}" ${p.a}>${p.txt}</text>`;
+    return `<${p.t} class="${p.cls}" ${p.a}/>`}).join('');
+  return `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`}
+
+/* ================= HOME ================= */
+function streak(){const days=new Set(store.get('su_days',[]));let n=0;const d=new Date();
+  if(!days.has(keyOf(d)))d.setDate(d.getDate()-1);while(days.has(keyOf(d))){n++;d.setDate(d.getDate()-1)}return n}
+function goHome(){clearInterval(suTimer);clearInterval(nnTimer);closeModal();renderHome();show('home')}
+function renderHome(){
+  const h=new Date().getHours();
+  $('#hiTitle').textContent=(h<12?'Good morning':h<17?'Hi':'Good evening')+', '+FOR_NAME+' 🐰';
+  const s=streak();const st=$('#streak');st.hidden=!s;st.textContent='🔥 '+s+'-day painting streak';
+  const doneLv=Object.keys(LEVELS).filter(l=>(store.get('su_'+todayKey()+'_'+l,{}).done));
+  $('#suTag').textContent=doneLv.length?('Today: '+doneLv.length+'/3 solved ✓'):'New puzzle today';
+  const cd=store.get('cb_done',[]);$('#cbTag').textContent=cd.length?cd.length+'/'+PAGES.length+' pages finished':PAGES.length+' pages';
+  const nd=store.get('nn_done',[]);$('#nnTag').textContent=nd.length?nd.length+'/'+NONO.length+' pictures found':NONO.length+' pictures';
+}
+
+/* ================= PAINT SUDOKU ================= */
+const PAINT=[{c:'#FF6B6B',t:'#fff'},{c:'#FF9F43',t:'#fff'},{c:'#FECA57',t:'#3B2F3F'},{c:'#1DD1A1',t:'#fff'},{c:'#48C9E8',t:'#fff'},
+             {c:'#5F7FFF',t:'#fff'},{c:'#A55EEA',t:'#fff'},{c:'#FF8ED4',t:'#fff'},{c:'#8D6E63',t:'#fff'}];
+const LEVELS={easy:{N:6,br:2,bc:3,givens:15,label:'Easy · 6×6'},classic:{N:9,br:3,bc:3,givens:33,label:'Classic · 9×9'},tricky:{N:9,br:3,bc:3,givens:25,label:'Tricky · 9×9'}};
+function cands(g,i,N,br,bc){const r=Math.floor(i/N),c=i%N,u=new Array(N+1).fill(false);
+  for(let k=0;k<N;k++){u[g[r*N+k]]=true;u[g[k*N+c]]=true}
+  const r0=r-r%br,c0=c-c%bc;for(let a=0;a<br;a++)for(let b=0;b<bc;b++)u[g[(r0+a)*N+c0+b]]=true;
+  const out=[];for(let v=1;v<=N;v++)if(!u[v])out.push(v);return out}
+function fillGrid(g,N,br,bc,rng){const i=g.indexOf(0);if(i<0)return true;
+  for(const v of shuffle(cands(g,i,N,br,bc),rng)){g[i]=v;if(fillGrid(g,N,br,bc,rng))return true}g[i]=0;return false}
+function countSol(g,N,br,bc,limit){let best=-1,bc_=null;
+  for(let i=0;i<N*N;i++)if(!g[i]){const c=cands(g,i,N,br,bc);if(!c.length)return 0;if(!bc_||c.length<bc_.length){best=i;bc_=c;if(c.length===1)break}}
+  if(best<0)return 1;let n=0;for(const v of bc_){g[best]=v;n+=countSol(g,N,br,bc,limit-n);if(n>=limit)break}g[best]=0;return n}
+function genSudoku(N,br,bc,givens,rng){const g=new Array(N*N).fill(0);fillGrid(g,N,br,bc,rng);const sol=g.slice(),p=sol.slice();let filled=N*N;
+  for(const i of shuffle([...Array(N*N).keys()],rng)){if(filled<=givens)break;const v=p[i];p[i]=0;
+    if(countSol(p.slice(),N,br,bc,2)!==1)p[i]=v;else filled--}
+  return{puzzle:p,solution:sol}}
+
+let SU=null,suTimer=null;
+function openSudoku(){const lv=store.get('su_lastLevel','easy');startSudoku(lv,false)}
+function startSudoku(level,practice){
+  clearInterval(suTimer);store.set('su_lastLevel',level);
+  const Lv=LEVELS[level],key=practice?null:'su_'+todayKey()+'_'+level;
+  const seed=practice?(Math.random()*1e9|0):hashStr(todayKey()+level);
+  const rng=rngF(seed);const {puzzle,solution}=genSudoku(Lv.N,Lv.br,Lv.bc,Lv.givens,rng);
+  const sv=key?store.get(key,null):null;
+  const pIdx=practice?Math.floor(Math.random()*PAGES.length):(dayNum()+Object.keys(LEVELS).indexOf(level)*2)%PAGES.length;
+  SU={level,L:Lv,key,practice,puzzle,solution,board:sv?sv.board:puzzle.slice(),elapsed:sv?sv.elapsed:0,done:sv?sv.done:false,hints:sv?sv.hints:0,sel:-1,page:PAGES[pIdx]};
+  renderSuTabs();suBuild();show('sudoku');
+  $('#suHelp').textContent=(practice?'Practice puzzle, so it doesn\'t count toward your streak. ':'Today\'s '+Lv.label+' puzzle. ')+'Each colour appears once in every row, column and box. Tap a square, then tap a paint.';
+  if(!SU.done){const t0=Date.now()-SU.elapsed*1000;suTimer=setInterval(()=>{SU.elapsed=Math.floor((Date.now()-t0)/1000);$('#suTime').textContent=fmt(SU.elapsed);if(SU.elapsed%5===0)suSave()},1000)}
+  $('#suTime').textContent=fmt(SU.elapsed);
+}
+function renderSuTabs(){const t=$('#suTabs');t.innerHTML='';
+  for(const [k,v] of Object.entries(LEVELS)){const b=document.createElement('button');
+    const done=(store.get('su_'+todayKey()+'_'+k,{})).done;
+    b.innerHTML=v.label.replace(' · ','<br>')+(done?' <span class="ck">✓</span>':'');
+    if(k===SU.level&&!SU.practice)b.className='on';b.onclick=()=>startSudoku(k,false);t.appendChild(b)}}
+function suSave(){if(SU.key)store.set(SU.key,{board:SU.board,elapsed:SU.elapsed,done:SU.done,hints:SU.hints})}
+function suBuild(){const {N,br,bc}=SU.L,g=$('#suGrid');g.style.gridTemplateColumns=`repeat(${N},1fr)`;g.innerHTML='';
+  for(let i=0;i<N*N;i++){const r=Math.floor(i/N),c=i%N,b=document.createElement('button');
+    let base='cell';if((c+1)%bc===0&&c<N-1)base+=' bR';if((r+1)%br===0&&r<N-1)base+=' bB';
+    b.dataset.base=base;b.onclick=()=>{SU.sel=i;suUpdate()};g.appendChild(b)}
+  const p=$('#suPal');p.innerHTML='';
+  for(let v=1;v<=N;v++){const b=document.createElement('button');b.className='sw';b.style.background=PAINT[v-1].c;b.style.color=PAINT[v-1].t;
+    b.innerHTML='<b>'+v+'</b>';b.onclick=()=>suPut(v);p.appendChild(b)}
+  document.body.classList.toggle('nonum',!store.get('nums',true));$('#numBtn').classList.toggle('on',store.get('nums',true));
+  suUpdate()}
+function suConflicts(){const {N,br,bc}=SU.L,B=SU.board,bad=new Set();
+  for(let i=0;i<N*N;i++){if(!B[i])continue;const r=Math.floor(i/N),c=i%N;
+    for(let j=0;j<N*N;j++){if(j===i||B[j]!==B[i])continue;const r2=Math.floor(j/N),c2=j%N;
+      if(r===r2||c===c2||(Math.floor(r/br)===Math.floor(r2/br)&&Math.floor(c/bc)===Math.floor(c2/bc)))bad.add(i)}}
+  return bad}
+function suUpdate(){const {N,br,bc}=SU.L,cells=$('#suGrid').children,bad=suConflicts(),s=SU.sel,sv=s>=0?SU.board[s]:0,count=new Array(N+1).fill(0);
+  const sr=Math.floor(s/N),sc=s%N;
+  for(let i=0;i<N*N;i++){const el=cells[i],v=SU.board[i],given=SU.puzzle[i]!==0,r=Math.floor(i/N),c=i%N;count[v]++;
+    let cls=el.dataset.base;
+    if(s>=0&&i!==s&&(r===sr||c===sc||(Math.floor(r/br)===Math.floor(sr/br)&&Math.floor(c/bc)===Math.floor(sc/bc))))cls+=' peer';
+    if(i===s)cls+=' sel';if(v&&v===sv)cls+=' same';if(bad.has(i)&&!given)cls+=' bad';
+    el.className=cls;
+    const html=v?`<span class="dab${given?' tile':''}" style="background:${PAINT[v-1].c};color:${PAINT[v-1].t}"><b>${v}</b></span>`:'';
+    if(el._h!==html){el.innerHTML=html;el._h=html}}
+  [...$('#suPal').children].forEach((b,k)=>b.classList.toggle('full',count[k+1]>=N))}
+function suPut(v){if(SU.done||SU.sel<0||SU.puzzle[SU.sel])return;SU.board[SU.sel]=SU.board[SU.sel]===v?0:v;suSave();suUpdate();suCheck()}
+function suErase(){if(SU.done||SU.sel<0||SU.puzzle[SU.sel])return;SU.board[SU.sel]=0;suSave();suUpdate()}
+function suHint(){if(SU.done)return;let i=SU.sel;
+  if(i<0||SU.puzzle[i]||SU.board[i]===SU.solution[i]){i=SU.board.findIndex((v,k)=>v!==SU.solution[k])}
+  if(i<0)return;SU.board[i]=SU.solution[i];SU.hints++;SU.sel=i;suSave();suUpdate();suCheck()}
+function suRestart(){if(SU.done)return;SU.board=SU.puzzle.slice();SU.sel=-1;suSave();suUpdate()}
+function toggleNums(){const on=!store.get('nums',true);store.set('nums',on);document.body.classList.toggle('nonum',!on);$('#numBtn').classList.toggle('on',on)}
+document.addEventListener('keydown',e=>{if($('#sudoku').hidden||!SU)return;const N=SU.L.N;
+  if(/^[1-9]$/.test(e.key)&&+e.key<=N)suPut(+e.key);else if(e.key==='Backspace'||e.key==='Delete'||e.key==='0')suErase();
+  else{const mv={ArrowUp:-N,ArrowDown:N,ArrowLeft:-1,ArrowRight:1}[e.key];if(mv){e.preventDefault();SU.sel=Math.min(N*N-1,Math.max(0,(SU.sel<0?0:SU.sel)+mv));suUpdate()}}});
+function suCheck(){if(!SU.board.every((v,i)=>v===SU.solution[i]))return;
+  SU.done=true;clearInterval(suTimer);SU.sel=-1;suSave();suUpdate();
+  if(!SU.practice){const d=new Set(store.get('su_days',[]));d.add(todayKey());store.set('su_days',[...d]);
+    const bk='su_best_'+SU.level,best=store.get(bk,null);if(!SU.hints&&(best==null||SU.elapsed<best))store.set(bk,SU.elapsed);renderSuTabs()}
+  const best=store.get('su_best_'+SU.level,null);
+  setTimeout(()=>{confetti();modal(`<h2>You painted it! 🎨</h2>
+    <div class="art">${pageSVG(SU.page,null,true)}</div>
+    <div class="stats">${SU.page.title} · ${SU.L.label} · ${fmt(SU.elapsed)}${SU.hints?' · '+SU.hints+' hint'+(SU.hints>1?'s':''):''}${best!=null?'<br>Best time: '+fmt(best):''}</div>
+    ${noteHTML(NOTES.sudoku)}
+    <div class="btns"><button class="btn" onclick="suShare()">📋 Copy my result</button>
+    <button class="btn alt" onclick="closeModal();openColor('${SU.page.id}')">🖍️ Colour this picture myself</button>
+    <button class="btn alt" onclick="goHome()">Back to games</button></div>`)},450)}
+function suShare(){const txt=`${FOR_NAME}'s Paint Sudoku 🎨 ${SU.practice?'(practice)':todayKey()}\n${SU.L.label} · ${fmt(SU.elapsed)}${SU.hints?' · '+SU.hints+' hint(s)':' · no hints'}\n🟥🟧🟨🟩🟦🟪`;
+  try{navigator.clipboard.writeText(txt).then(()=>toast('Copied! Send it to '+FROM_NAME+' 😉'),()=>toast('Couldn\'t copy on this device'))}catch(e){toast('Couldn\'t copy on this device')}}
+
+/* ================= COLOURING BOOK ================= */
+const CPAL=['#FF6B6B','#FF9F43','#FECA57','#1DD1A1','#10AC84','#48C9E8','#5F7FFF','#A55EEA','#8E44AD',
+            '#FF8ED4','#FFB3C7','#F3D9B1','#C68B59','#7A4E2D','#3B2F3F','#9AA0A6','#F4EEF7','#FFFFFF'];
+let CB={page:null,fills:[],undo:[],col:CPAL[0]};
+function openColor(id){show('color');id?cbOpen(id):cbList()}
+function cbList(){$('#cbTitle').textContent='Colouring Book';$('#cbList').hidden=false;$('#cbPage').hidden=true;$('#cbBack').onclick=goHome;
+  const done=store.get('cb_done',[]);
+  $('#cbList').innerHTML=PAGES.map(p=>`<button class="pcard" onclick="cbOpen('${p.id}')">${pageSVG(p,store.get('cb_'+p.id,[]),false)}
+    <h3>${p.title}</h3><small>${done.includes(p.id)?'Finished ✓':(store.get('cb_'+p.id,[]).some(Boolean)?'In progress':'Blank page')}</small></button>`).join('')}
+function cbOpen(id){const p=PAGES.find(x=>x.id===id);CB.page=p;CB.fills=store.get('cb_'+id,[]);CB.undo=[];
+  $('#cbTitle').textContent=p.title;$('#cbList').hidden=true;$('#cbPage').hidden=false;$('#cbBack').onclick=cbList;
+  cbDraw();
+  $('#cbPal').innerHTML=CPAL.map(c=>`<button style="background:${c}" data-c="${c}"></button>`).join('');
+  [...$('#cbPal').children].forEach(b=>b.onclick=()=>{CB.col=b.dataset.c;cbPalUpd()});cbPalUpd();window.scrollTo(0,0)}
+function cbDraw(){$('#cbCanvas').innerHTML=pageSVG(CB.page,CB.fills,false);
+  $('#cbCanvas').querySelectorAll('.r').forEach(el=>el.addEventListener('click',()=>{const i=+el.dataset.i;
+    CB.undo.push([i,CB.fills[i]||null]);CB.fills[i]=CB.col;el.setAttribute('fill',CB.col);cbSave()}))}
+function cbPalUpd(){[...$('#cbPal').children].forEach(b=>b.classList.toggle('on',b.dataset.c===CB.col));$('#cbCur').style.background=CB.col}
+function cbSave(){store.set('cb_'+CB.page.id,CB.fills)}
+function cbUndo(){const u=CB.undo.pop();if(!u)return;CB.fills[u[0]]=u[1];cbSave();cbDraw()}
+function cbClear(){CB.undo=[];CB.fills=[];cbSave();cbDraw();toast('Fresh page ✨')}
+function cbDone(){const d=new Set(store.get('cb_done',[]));d.add(CB.page.id);store.set('cb_done',[...d]);confetti();
+  modal(`<h2>Masterpiece 🖼️</h2><div class="art">${pageSVG(CB.page,CB.fills,false)}</div>${noteHTML(NOTES.color)}
+  <div class="btns"><button class="btn" onclick="closeModal();cbList()">Colour another page</button>
+  <button class="btn alt" onclick="closeModal()">Keep painting this one</button><button class="btn alt" onclick="goHome()">Back to games</button></div>`)}
+
+/* ================= PICTURE LOGIC (nonograms) ================= */
+const NONO=[
+ {name:'Heart',col:{R:'#FF6B6B'},rows:["..........",".RR....RR.","RRRR..RRRR","RRRRRRRRRR","RRRRRRRRRR",".RRRRRRRR.","..RRRRRR..","...RRRR...","....RR....",".........."]},
+ {name:'Bunny',col:{W:'#E4D8EC',P:'#FFB3C7',K:'#3B2F3F',T:'#FFFFFF'},rows:[".WW....WW.",".WPW..WPW.","..WP..PW..","..WWWWWW..",".WWWWWWWW.",".WKWWWWKW.",".WWWPPWWW.","WWWWTTWWWW",".WWWTTWWW.","...WWWW..."]},
+ {name:'Puppy',col:{B:'#7A4E2D',T:'#C68B59',K:'#3B2F3F',N:'#3B2F3F',P:'#FF7A9C'},rows:[".BB....BB.","BBBTTTTBBB","BBTTTTTTBB","BTKTTTTKTB",".TTTTTTTT.",".TTTNNTTT.","..TTNNTT..","..TTTTTT..","...TPPT...","....PP...."]},
+ {name:'Purple drink',col:{K:'#5B2C83',P:'#8E44AD',W:'#FFFFFF'},rows:["....KK....","....KK....","...PPPP...","..PPPPPP..","..PWWWWP..","..PWWWWP..","..PPPPPP..","..PPPPPP..","..PPPPPP..","...PPPP..."]},
+ {name:'Agege bread',col:{O:'#D9822B',Y:'#FFE8B0'},rows:["..........","..OOOOOO..",".OOOOOOOO.","OOYYYYYYOO","OYYYYYYYYO","OYYYYYYYYO","OYYYYYYYYO","OYYYYYYYYO","OOOOOOOOOO",".........."]}
+];
+let NN=null,nnTimer=null,nnMode=1,drag=null;
+function runs(arr){const o=[];let n=0;for(const v of arr){if(v)n++;else if(n){o.push(n);n=0}}if(n)o.push(n);return o.length?o:[0]}
+function openLogic(){show('logic');nnListView()}
+function nnListView(){clearInterval(nnTimer);$('#nnTitle').textContent='Picture Logic';$('#nnTime').hidden=true;$('#nnList').hidden=false;$('#nnPlay').hidden=true;$('#nnBack').onclick=goHome;
+  const done=store.get('nn_done',[]);
+  $('#nnCards').innerHTML=NONO.map((p,k)=>{const N=p.rows.length;
+    const art=done.includes(k)?`<div class="mini" style="grid-template-columns:repeat(${N},1fr)">${p.rows.join('').split('').map(ch=>`<i style="background:${ch==='.'?'transparent':p.col[ch]}"></i>`).join('')}</div>`:`<div class="q">?</div>`;
+    return `<button class="ncard" onclick="nnOpen(${k})">${art}${done.includes(k)?p.name+' ✓':'Puzzle '+(k+1)}</button>`}).join('')}
+function nnOpen(k){const p=NONO[k],N=p.rows.length;
+  const sol=p.rows.map(r=>r.split('').map(ch=>ch!=='.'));
+  NN={k,p,N,sol,st:store.get('nn_'+k,null)||Array.from({length:N},()=>new Array(N).fill(0)),done:false,elapsed:0};
+  NN.rc=sol.map(runs);NN.cc=[...Array(N).keys()].map(c=>runs(sol.map(r=>r[c])));
+  $('#nnTitle').textContent='Puzzle '+(k+1);$('#nnList').hidden=true;$('#nnPlay').hidden=false;$('#nnBack').onclick=nnListView;$('#nnTime').hidden=false;
+  nnBuild();setMode(1);const t0=Date.now();$('#nnTime').textContent='0:00';
+  clearInterval(nnTimer);nnTimer=setInterval(()=>{NN.elapsed=Math.floor((Date.now()-t0)/1000);$('#nnTime').textContent=fmt(NN.elapsed)},1000)}
+function nnBuild(){const {N}=NN,b=$('#nnBoard');const maxR=Math.max(...NN.rc.map(r=>r.length));
+  const avail=Math.min(window.innerWidth-32,488)-(maxR*14+16);const cs=Math.max(22,Math.min(38,Math.floor(avail/N)));
+  b.style.gridTemplateColumns=`auto repeat(${N},${cs}px)`;b.style.gridAutoRows=`${cs}px`;b.innerHTML='';
+  const corner=document.createElement('div');b.appendChild(corner);
+  NN.cc.forEach((c,ci)=>{const d=document.createElement('div');d.className='cl col';d.id='cc'+ci;d.style.height=(Math.max(...NN.cc.map(x=>x.length))*15+6)+'px';d.innerHTML=c.map(n=>`<span>${n}</span>`).join('');b.appendChild(d)});
+  for(let r=0;r<N;r++){const rl=document.createElement('div');rl.className='cl row';rl.id='rc'+r;rl.innerHTML=NN.rc[r].map(n=>`<span>${n}</span>`).join('');b.appendChild(rl);
+    for(let c=0;c<N;c++){const d=document.createElement('div');let cls='nc';
+      if(c%5===4&&c<N-1)cls+=' b5';if(r%5===4&&r<N-1)cls+=' r5';if(r===0)cls+=' t';if(c===0)cls+=' l';if(c===N-1)cls+=' rr';if(r===N-1)cls+=' bb';
+      d.className=cls;d.dataset.base=cls;d.dataset.r=r;d.dataset.c=c;b.appendChild(d)}}
+  // first row of grid rows is the column-clue row; make it auto height
+  b.style.gridTemplateRows=`auto repeat(${N},${cs}px)`;
+  nnPaint()}
+function nnCell(r,c){return $('#nnBoard').querySelector(`.nc[data-r="${r}"][data-c="${c}"]`)}
+function nnPaint(){const {N,st}=NN;
+  $('#nnBoard').querySelectorAll('.nc').forEach(el=>{const v=st[+el.dataset.r][+el.dataset.c];el.className=el.dataset.base+(v===1?' f':v===2?' x':'');
+    if(NN.done){const ch=NN.p.rows[+el.dataset.r][+el.dataset.c];el.style.background=ch==='.'?'#fff':NN.p.col[ch];el.className=el.dataset.base}});
+  for(let r=0;r<N;r++)$('#rc'+r).classList.toggle('ok',runs(st[r].map(v=>v===1)).join()===NN.rc[r].join());
+  for(let c=0;c<N;c++)$('#cc'+c).classList.toggle('ok',runs(st.map(row=>row[c]===1)).join()===NN.cc[c].join())}
+function setMode(m){nnMode=m;$('#mFill').classList.toggle('on',m===1);$('#mMark').classList.toggle('on',m===2)}
+function nnApply(el){if(!el||!el.classList.contains('nc')||NN.done)return;const r=+el.dataset.r,c=+el.dataset.c;
+  if(NN.st[r][c]===drag.target)return;NN.st[r][c]=drag.target;nnPaint()}
+const board=document.getElementById('nnBoard');
+board.addEventListener('pointerdown',e=>{const el=e.target.closest('.nc');if(!el||NN.done)return;e.preventDefault();
+  const cur=NN.st[+el.dataset.r][+el.dataset.c];drag={target:cur===nnMode?0:nnMode};nnApply(el);try{board.setPointerCapture(e.pointerId)}catch(_){}});
+board.addEventListener('pointermove',e=>{if(!drag)return;nnApply(document.elementFromPoint(e.clientX,e.clientY))});
+const endDrag=()=>{if(!drag)return;drag=null;store.set('nn_'+NN.k,NN.st);nnCheck()};
+board.addEventListener('pointerup',endDrag);board.addEventListener('pointercancel',endDrag);
+function nnClear(){if(NN.done)return;NN.st=NN.st.map(r=>r.map(()=>0));store.set('nn_'+NN.k,NN.st);nnPaint()}
+function nnCheck(){const ok=NN.sol.every((row,r)=>row.every((v,c)=>v===(NN.st[r][c]===1)));if(!ok)return;
+  NN.done=true;clearInterval(nnTimer);const d=new Set(store.get('nn_done',[]));d.add(NN.k);store.set('nn_done',[...d]);store.set('nn_'+NN.k,null);nnPaint();
+  setTimeout(()=>{confetti();const N=NN.N;
+    modal(`<h2>It's ${/^[aeiou]/i.test(NN.p.name)?'an':'a'} ${NN.p.name.toLowerCase()}! 🧩</h2>
+    <div class="art" style="display:grid;grid-template-columns:repeat(${N},1fr);aspect-ratio:1;background:#fff">${NN.p.rows.join('').split('').map(ch=>`<i style="background:${ch==='.'?'#fff':NN.p.col[ch]}"></i>`).join('')}</div>
+    <div class="stats">Solved in ${fmt(NN.elapsed)}</div>${noteHTML(NOTES.logic)}
+    <div class="btns">${NN.k<NONO.length-1?`<button class="btn" onclick="closeModal();nnOpen(${NN.k+1})">Next puzzle →</button>`:''}
+    <button class="btn alt" onclick="closeModal();nnListView()">All puzzles</button><button class="btn alt" onclick="goHome()">Back to games</button></div>`)},400)}
+
+/* ================= boot ================= */
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+renderHome();show('home');
+</script>
+</body>
+</html>
