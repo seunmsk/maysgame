@@ -279,9 +279,9 @@ svg text.d{font-family:Fredoka,sans-serif;font-weight:700}
     <div class="gicon" style="background:#DDF7EE">🧩</div>
     <div><h3>Picture Logic</h3><p>Use the number clues to shade squares and find the hidden picture.</p><span class="tag" id="nnTag">5 pictures</span></div>
   </button>
-  <button class="gcard" onclick="location.href='/salon/'">
+  <button class="gcard" onclick="openSalon()">
     <div class="gicon" style="background:#FFE3EC">💇🏾‍♀️</div>
-    <div><h3>May's Hair Studio</h3><p>Wash, cut, style and colour your clients' hair. Make them look fine!</p><span class="tag">New salon <span class="newdot">NEW</span></span></div>
+    <div><h3>May's Hair Studio</h3><p>Wash, cut, style and colour your clients' hair. Make them look fine!</p><span class="tag" id="slTag">New salon</span></div>
   </button>
   <button class="gcard" onclick="openFruit()">
     <div class="gicon" style="background:#FFE1E1">🍉</div>
@@ -388,6 +388,7 @@ svg text.d{font-family:Fredoka,sans-serif;font-weight:700}
 </section>
 
 </div>
+<div id="salonView" hidden style="position:fixed;inset:0;z-index:18;background:#FFE3EC"></div>
 <div class="modal" id="modal" hidden><div class="sheet" id="sheet"></div></div>
 
 <script>
@@ -741,7 +742,9 @@ function renderHome(){
   $('#nnTag').innerHTML=(nd.length?nd.length+'/'+nOpen+' pictures found':nOpen+' pictures')+(nNew?'<span class="newdot">NEW</span>':'');
   const cNew=PAGES.some(p=>recent(p.unlock)&&!cd.includes(p.id));if(cNew)$('#cbTag').innerHTML=$('#cbTag').textContent+'<span class="newdot">NEW</span>';
   $('#cbTag').innerHTML=$('#cbTag').innerHTML.replace('/'+PAGES.length,'/'+availPages().length);
-  const fb=Math.max(store.get('fs_best_classic',0),store.get('fs_best_zen',0));if(fb)$('#fsTag').textContent='Best score: '+fb;
+  const fb=Math.max(store.get('fs_best_classic',0),store.get('fs_best_zen',0));
+  if(fb)$('#fsTag').textContent='Best score: '+fb;else if(!store.get('seen_fruit',false)&&!store.get('c_fs',0))$('#fsTag').innerHTML='New game <span class="newdot">NEW</span>';else $('#fsTag').textContent='Slice away';
+  salonTag();
   const art=store.get('art',[]);$('#fpTag').textContent=art.length?art.length+' painting'+(art.length>1?'s':'')+' in your gallery':'Your gallery is empty';
   $('#affName').textContent=FOR_NAME.toUpperCase();renderAff();renderDrop();checkAch();
 }
@@ -871,7 +874,7 @@ function noise(d=.15,vol=.2,freq=1800,q=1){if(!SND.on)return;const c=ac();if(!c)
   const g=c.createGain();g.gain.value=vol;src.connect(f).connect(g).connect(c.destination);src.start()}
 const FRUITS=[['🍉','#FF4D6D'],['🥭','#FFB703'],['🍍','#FFD166'],['🍊','#FF8C1A'],['🍌','#FFE066'],['🍇','#9B5DE5'],['🥥','#F2EBE3'],['🍎','#E63946'],['🍓','#FF3355'],['🍑','#FFA07A'],['🥝','#8AC926']];
 const FS={running:false,raf:0};
-function openFruit(){show('fruit');fsSize();$('#fsStart').hidden=false;$('#fsEnd').hidden=true;fsHud();fsBests();fsIdle()}
+function openFruit(){store.set('seen_fruit',true);show('fruit');fsSize();$('#fsStart').hidden=false;$('#fsEnd').hidden=true;fsHud();fsBests();fsIdle()}
 function fsBests(){const c=store.get('fs_best_classic',0),z=store.get('fs_best_zen',0);
   $('#fsBests').textContent=(c||z)?`Best · Classic ${c} · Zen ${z}`:'';$('#fsBestPill').textContent='Best '+Math.max(c,z)}
 function fsSize(){const cv=$('#fsCv'),w=cv.parentElement.clientWidth||360,h=Math.round(Math.min(window.innerHeight*.7,w*1.35));
@@ -956,6 +959,23 @@ function fsEnd(){if(!FS.running)return;FS.running=false;cancelAnimationFrame(FS.
     <button class="btn alt" onclick="goHome()">Back to games</button>`;
   $('#fsEnd').hidden=false;if(nb&&FS.score){confetti();sfx.win()}else tone(523,.3,'triangle',.1)}
 window.addEventListener('resize',()=>{if(!$('#fruit').hidden&&!FS.running){fsSize();fsDraw()}});
+
+/* ================= HAIR STUDIO (opens inside the dashboard) ================= */
+function openSalon(){store.set('seen_salon',true);const v=$('#salonView');
+  if(!v.firstChild){const f=document.createElement('iframe');f.src='/salon/?embed=1';f.title="May's Hair Studio";f.allow='autoplay';
+    f.style.cssText='border:0;width:100%;height:100%;display:block';v.appendChild(f)}
+  v.hidden=false;document.body.style.overflow='hidden';clearInterval(SND.timer);
+  try{v.firstChild.contentWindow.postMessage('mg-show','*')}catch(e){}
+  if(location.hash!=='#salon')history.pushState(null,'','#salon')}
+function closeSalon(){const v=$('#salonView');if(v.hidden)return;v.hidden=true;document.body.style.overflow='';
+  try{v.firstChild.contentWindow.postMessage('mg-hide','*')}catch(e){}startMusic();renderHome();
+  if(location.hash==='#salon')history.back()}
+window.addEventListener('message',e=>{if(e.origin===location.origin&&e.data==='mg-close')closeSalon()});
+window.addEventListener('popstate',()=>{if(location.hash!=='#salon'&&!$('#salonView').hidden){const v=$('#salonView');v.hidden=true;document.body.style.overflow='';
+  try{v.firstChild.contentWindow.postMessage('mg-hide','*')}catch(e){}startMusic();renderHome()}});
+function salonTag(){const el=$('#slTag');if(!el)return;let sv={};try{sv=JSON.parse(localStorage.getItem('mays_salon')||'{}')||{}}catch(e){}
+  if(!store.get('seen_salon',false)){el.innerHTML='New salon <span class="newdot">NEW</span>';return}
+  el.textContent=sv.served?`⭐ ${sv.stars||0} stars · ${sv.served} happy client${sv.served>1?'s':''}`:'Your salon is open 💇🏾‍♀️'}
 
 /* ================= FREE PAINT ================= */
 const FP={tool:'brush',col:'#A55EEA',size:14,stamp:'⭐',undo:[],ctx:null,last:null,drawing:false};
@@ -1089,6 +1109,7 @@ $('#mascotArt').innerHTML=BUNNY_SVG;$('#spBunny').innerHTML=BUNNY_SVG;$('#spTitl
 spawnFloaters();updSndBtns();tickLive();setInterval(tickLive,1000);setInterval(()=>{if(!$('#home').hidden)renderDrop()},30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&SND.ctx)SND.ctx.resume()});
 renderHome();show('home');
+if(location.hash==='#salon'){history.replaceState(null,'',location.pathname);setTimeout(()=>{$('#splash')&&enter();openSalon()},50)}
 </script>
 </body>
 </html>

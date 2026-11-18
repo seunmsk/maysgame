@@ -108,7 +108,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#fbd3e3;font-family:Fr
     <div class="stats"><div class="stat"><b id="hStars">0</b><span>stars</span></div><div class="stat"><b id="hServed">0</b><span>happy clients</span></div><div class="stat"><b id="hDay">1</b><span>day</span></div></div>
     <button class="btn" id="playB">Open the salon</button>
     <button class="btn g" id="howB" style="margin-top:12px">How to play</button>
-    <a class="btn g" href="/" style="margin-top:12px;text-decoration:none">← All my games</a>
+    <a class="btn g" href="/" id="gamesB" style="margin-top:12px;text-decoration:none">← All my games</a>
     <div class="foot">Made for May 🐰 by Seun · he gets to see your looks 📸</div>
   </div>
 
@@ -721,6 +721,11 @@ function startPlay(){ initAudio(); show('home',false); show('res',false); state=
 $('playB').onclick=startPlay; $('nextB').onclick=()=>{ sfx.click(); startPlay(); };
 $('howB').onclick=()=>show('how',true); $('howX').onclick=()=>show('how',false);
 $('homeB').onclick=()=>{ sfx.click(); goHome(); };
+// Inside May's Games dashboard: "All my games" closes the salon instead of loading a new page
+const EMBED=window.parent!==window;
+$('gamesB').addEventListener('click',e=>{ if(EMBED){ e.preventDefault(); try{sfx.click()}catch(_){} parent.postMessage('mg-close',location.origin); } });
+window.addEventListener('message',e=>{ if(e.origin!==location.origin) return;
+  if(e.data==='mg-hide'&&AC) AC.suspend(); if(e.data==='mg-show'&&AC) AC.resume(); });
 $('doneB').onclick=done;
 
 // ---------- layout ----------
