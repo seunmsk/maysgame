@@ -293,7 +293,7 @@ svg text.d{font-family:Fredoka,sans-serif;font-weight:700}
   </button>
   <div class="drop" id="drop"></div>
   <button class="trophyBtn" onclick="showTrophies()"><span>🏆 Trophy shelf</span><span id="trophyCount" class="shelf"></span></button>
-  <div class="foot" id="foot">Made by Seun in Surulere (the better side of Lagos) 💜</div>
+  <div class="foot" id="foot">Made by Seun in Surulere (the better side of Lagos) 💜<br><span style="opacity:.8">Seun can see your game progress, so he knows when to add new stuff ✨</span></div>
 </section>
 
 <!-- FRUIT SLASH -->
@@ -467,7 +467,7 @@ function hashStr(s){let h=2166136261;for(const ch of s){h^=ch.charCodeAt(0);h=Ma
 function rngF(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 function shuffle(a,rng){for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 
-function show(id){document.querySelectorAll('.view').forEach(v=>v.hidden=v.id!==id);const f=$('#floaters');if(f)f.hidden=id!=='home';window.scrollTo(0,0)}
+function show(id){const g={home:'home',sudoku:'sudoku',color:'colour',logic:'logic',fruit:'fruit',paint:'paint'}[id]||'home';if(typeof setGame==='function')setGame(g);document.querySelectorAll('.view').forEach(v=>v.hidden=v.id!==id);const f=$('#floaters');if(f)f.hidden=id!=='home';window.scrollTo(0,0)}
 function modal(html){$('#sheet').innerHTML=html;$('#modal').hidden=false}
 function closeModal(){$('#modal').hidden=true}
 function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),1800)}
@@ -724,7 +724,7 @@ function showTrophies(){const got=store.get('ach',[]),saved=store.get('aff_saved
 /* ================= HOME ================= */
 function streak(){const days=new Set(store.get('su_days',[]));let n=0;const d=new Date();
   if(!days.has(keyOf(d)))d.setDate(d.getDate()-1);while(days.has(keyOf(d))){n++;d.setDate(d.getDate()-1)}return n}
-function goHome(){if(FS.running){FS.running=false;cancelAnimationFrame(FS.raf)}clearInterval(suTimer);clearInterval(nnTimer);if(FP.ctx)fpWip();closeModal();renderHome();show('home')}
+function goHome(){snap();if(FS.running){FS.running=false;cancelAnimationFrame(FS.raf)}clearInterval(suTimer);clearInterval(nnTimer);if(FP.ctx)fpWip();closeModal();renderHome();show('home')}
 function renderHome(){
   const h=new Date().getHours();
   const greet=(h<12?'Good morning':h<17?'Hi':'Good evening')+', '+FOR_NAME;
@@ -826,6 +826,7 @@ function suCheck(){if(!SU.board.every((v,i)=>v===SU.solution[i]))return;
   SU.done=true;clearInterval(suTimer);SU.sel=-1;suSave();suUpdate();
   if(!SU.practice){const d=new Set(store.get('su_days',[]));d.add(todayKey());store.set('su_days',[...d]);
     const bk='su_best_'+SU.level,best=store.get(bk,null);if(!SU.hints&&(best==null||SU.elapsed<best))store.set(bk,SU.elapsed);renderSuTabs()}
+  track('sudoku','win',{level:SU.level,secs:SU.elapsed,hints:SU.hints,practice:SU.practice,page:SU.page.title});
   bump('c_su');if(!SU.hints)bump('c_nohint');if(SU.level==='tricky')store.set('f_tricky',true);
   if((SU.level==='easy'&&SU.elapsed<90)||(SU.level==='classic'&&SU.elapsed<300))store.set('f_speed',true);markWinTime();checkAch();
   const best=store.get('su_best_'+SU.level,null);
@@ -861,7 +862,7 @@ function cbPalUpd(){[...$('#cbPal').children].forEach(b=>b.classList.toggle('on'
 function cbSave(){store.set('cb_'+CB.page.id,CB.fills)}
 function cbUndo(){const u=CB.undo.pop();if(!u)return;CB.fills[u[0]]=u[1];cbSave();cbDraw()}
 function cbClear(){CB.undo=[];CB.fills=[];cbSave();cbDraw();toast('Fresh page ✨')}
-function cbDone(){const d=new Set(store.get('cb_done',[]));d.add(CB.page.id);store.set('cb_done',[...d]);confetti();sfx.win();markWinTime();checkAch();
+function cbDone(){const d=new Set(store.get('cb_done',[]));d.add(CB.page.id);store.set('cb_done',[...d]);confetti();sfx.win();markWinTime();checkAch();track('colour','win',{page:CB.page.title});
   modal(`<h2>Masterpiece 🖼️</h2><div class="art">${pageSVG(CB.page,CB.fills,false)}</div>${noteHTML(NOTES.color)}${affMini()}
   <div class="btns"><button class="btn" onclick="closeModal();cbList()">Colour another page</button>
   <button class="btn alt" onclick="closeModal()">Keep painting this one</button><button class="btn alt" onclick="goHome()">Back to games</button></div>`)}
@@ -949,7 +950,7 @@ function fsCombo(){if(FS.combo>=3){const b=FS.combo;FS.score+=b;fsText('Combo x'
       if(Math.hypot(it.x-cx,it.y-cy)<FS.R*1.05)fsSlice(it,ang)}});
   const up=()=>{FS.down=false};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up)})();
 function fsEnd(){if(!FS.running)return;FS.running=false;cancelAnimationFrame(FS.raf);if(FS.combo)fsCombo();
-  const k='fs_best_'+FS.mode,prev=store.get(k,0),nb=FS.score>prev;if(nb)store.set(k,FS.score);bump('c_fs');markWinTime();checkAch();fsBests();
+  const k='fs_best_'+FS.mode,prev=store.get(k,0),nb=FS.score>prev;if(nb)store.set(k,FS.score);bump('c_fs');track('fruit','win',{mode:FS.mode,score:FS.score,best:Math.max(prev,FS.score),newBest:nb&&FS.score>0,combo:FS.maxCombo});markWinTime();checkAch();fsBests();
   const lines=FS.score>=40?['Juice queen! Nothing stood a chance 🍉','That was elite slicing 🔪✨']:FS.score>=15?['Smooth! Your swipes are getting sharper 😎','Nice one! Go again, beat it 💪🏽']:['Warm-up round. The next one is yours 💜','Good start! Again, again 🔁'];
   $('#fsEndIn').innerHTML=`<div class="big">${nb&&FS.score?'🏆':'🍉'}</div><h2>${FS.score} slice${FS.score===1?'':'s'}</h2>
     <p style="margin:4px 0 6px">${nb&&FS.score?'New best score! 🎉':'Best: '+prev}${FS.maxCombo>=3?' · Biggest combo x'+FS.maxCombo:''}</p>
@@ -961,17 +962,17 @@ function fsEnd(){if(!FS.running)return;FS.running=false;cancelAnimationFrame(FS.
 window.addEventListener('resize',()=>{if(!$('#fruit').hidden&&!FS.running){fsSize();fsDraw()}});
 
 /* ================= HAIR STUDIO (opens inside the dashboard) ================= */
-function openSalon(){store.set('seen_salon',true);const v=$('#salonView');
+function openSalon(){store.set('seen_salon',true);setGame('salon');const v=$('#salonView');
   if(!v.firstChild){const f=document.createElement('iframe');f.src='/salon/?embed=1';f.title="May's Hair Studio";f.allow='autoplay';
     f.style.cssText='border:0;width:100%;height:100%;display:block';v.appendChild(f)}
   v.hidden=false;document.body.style.overflow='hidden';clearInterval(SND.timer);
   try{v.firstChild.contentWindow.postMessage('mg-show','*')}catch(e){}
   if(location.hash!=='#salon')history.pushState(null,'','#salon')}
-function closeSalon(){const v=$('#salonView');if(v.hidden)return;v.hidden=true;document.body.style.overflow='';
+function closeSalon(){const v=$('#salonView');if(v.hidden)return;setGame('home');v.hidden=true;document.body.style.overflow='';
   try{v.firstChild.contentWindow.postMessage('mg-hide','*')}catch(e){}startMusic();renderHome();
   if(location.hash==='#salon')history.back()}
 window.addEventListener('message',e=>{if(e.origin===location.origin&&e.data==='mg-close')closeSalon()});
-window.addEventListener('popstate',()=>{if(location.hash!=='#salon'&&!$('#salonView').hidden){const v=$('#salonView');v.hidden=true;document.body.style.overflow='';
+window.addEventListener('popstate',()=>{if(location.hash!=='#salon'&&!$('#salonView').hidden){setGame('home');const v=$('#salonView');v.hidden=true;document.body.style.overflow='';
   try{v.firstChild.contentWindow.postMessage('mg-hide','*')}catch(e){}startMusic();renderHome()}});
 function salonTag(){const el=$('#slTag');if(!el)return;let sv={};try{sv=JSON.parse(localStorage.getItem('mays_salon')||'{}')||{}}catch(e){}
   if(!store.get('seen_salon',false)){el.innerHTML='New salon <span class="newdot">NEW</span>';return}
@@ -1014,7 +1015,7 @@ function fpUi(){document.querySelectorAll('#paint .tool[data-t]').forEach(b=>b.c
 function fpSave(){const tmp=document.createElement('canvas');tmp.width=tmp.height=480;tmp.getContext('2d').drawImage($('#cv'),0,0,480,480);
   const url=tmp.toDataURL('image/jpeg',.82);let art=store.get('art',[]);art.unshift({url,d:todayKey()});if(art.length>12)art=art.slice(0,12);
   store.set('art',art);if(store.get('art',[]).length!==art.length){art.pop();store.set('art',art)}
-  bump('c_art');confetti();sfx.win();fpGallery();checkAch();
+  bump('c_art');confetti();sfx.win();fpGallery();checkAch();track('paint','win',{count:art.length});
   modal(`<h2>Saved to your gallery 🖼️</h2><div class="art"><img src="${url}" style="width:100%;display:block"></div>${noteHTML(NOTES.color)}${affMini()}
   <div class="btns"><button class="btn" onclick="closeModal()">Keep painting</button></div>`)}
 function fpGallery(){const art=store.get('art',[]);$('#fpEmpty').hidden=art.length>0;
@@ -1095,7 +1096,7 @@ const endDrag=()=>{if(!drag)return;drag=null;store.set('nn_'+NN.k,NN.st);nnCheck
 board.addEventListener('pointerup',endDrag);board.addEventListener('pointercancel',endDrag);
 function nnClear(){if(NN.done)return;NN.st=NN.st.map(r=>r.map(()=>0));store.set('nn_'+NN.k,NN.st);nnPaint()}
 function nnCheck(){const ok=NN.sol.every((row,r)=>row.every((v,c)=>v===(NN.st[r][c]===1)));if(!ok)return;
-  NN.done=true;clearInterval(nnTimer);const d=new Set(store.get('nn_done',[]));d.add(NN.k);store.set('nn_done',[...d]);store.set('nn_'+NN.k,null);nnPaint();markWinTime();checkAch();
+  NN.done=true;clearInterval(nnTimer);const d=new Set(store.get('nn_done',[]));d.add(NN.k);store.set('nn_done',[...d]);store.set('nn_'+NN.k,null);nnPaint();markWinTime();checkAch();track('logic','win',{name:NN.p.name,big:!!NN.p.big,secs:NN.elapsed});
   setTimeout(()=>{confetti();sfx.win();const N=NN.N;
     modal(`<h2>It's ${/^[aeiou]/i.test(NN.p.name)?'an':'a'} ${NN.p.name.toLowerCase()}! 🧩</h2>
     <div class="art" style="display:grid;grid-template-columns:repeat(${N},1fr);aspect-ratio:1;background:#fff">${NN.p.rows.join('').split('').map(ch=>`<i style="background:${ch==='.'?'#fff':NN.p.col[ch]}"></i>`).join('')}</div>
@@ -1103,12 +1104,43 @@ function nnCheck(){const ok=NN.sol.every((row,r)=>row.every((v,c)=>v===(NN.st[r]
     <div class="btns">${(()=>{const nx=NONO.findIndex((x,j)=>j>NN.k&&isOpen(x.unlock)&&!store.get('nn_done',[]).includes(j));return nx>=0?`<button class="btn" onclick="closeModal();nnOpen(${nx})">Next puzzle →</button>`:''})()}
     <button class="btn alt" onclick="closeModal();nnListView()">All puzzles</button><button class="btn alt" onclick="goHome()">Back to games</button></div>`)},400)}
 
+/* ================= Progress sync (Seun's private dashboard: /stats) ================= */
+const TR={sb:null,q:[],lastSnap:0,game:'home'};
+const DEV=(()=>{let d=null;try{d=JSON.parse(localStorage.getItem('mays_dev'))}catch(e){}
+  if(!d){d='m'+Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4);try{localStorage.setItem('mays_dev',JSON.stringify(d))}catch(e){}}return d})();
+function track(game,kind,data={}){const e={p_device:DEV,p_game:game,p_kind:kind,p_data:data};
+  if(TR.sb){try{TR.sb.rpc('mg_log',e).then(()=>{},()=>{})}catch(_){}}else if(TR.q.length<30)TR.q.push(e)}
+function setGame(g){if(g===TR.game)return;TR.game=g;if(g!=='home')track(g,'play')}
+function snapshot(){const nd=store.get('nn_done',[]),on=NONO.map((p,k)=>[p,k]).filter(([p])=>isOpen(p.unlock));
+  let sv={};try{sv=JSON.parse(localStorage.getItem('mays_salon')||'{}')||{}}catch(e){}
+  const nxt=DROPS.find(d=>!isOpen(d.date));
+  return{v:1,streak:streak(),suDays:store.get('su_days',[]).length,suSolved:store.get('c_su',0),
+    suToday:Object.keys(LEVELS).filter(l=>(store.get('su_'+todayKey()+'_'+l,{})).done),today:todayKey(),
+    suBest:{easy:store.get('su_best_easy',null),classic:store.get('su_best_classic',null),tricky:store.get('su_best_tricky',null)},
+    cbDone:store.get('cb_done',[]).length,cbOpen:availPages().length,cbTotal:PAGES.length,
+    nnSmallDone:on.filter(([p,k])=>!p.big&&nd.includes(k)).length,nnSmallOpen:on.filter(([p])=>!p.big).length,
+    nnBigDone:on.filter(([p,k])=>p.big&&nd.includes(k)).length,nnBigOpen:on.filter(([p])=>p.big).length,nnBigTotal:NONO.filter(p=>p.big).length,
+    fsClassic:store.get('fs_best_classic',0),fsZen:store.get('fs_best_zen',0),fsPlays:store.get('c_fs',0),
+    art:store.get('art',[]).length,artSaves:store.get('c_art',0),
+    trophies:store.get('ach',[]).length,trophiesTotal:ACH.length,kept:store.get('aff_saved',[]).length,
+    salon:{stars:sv.stars||0,served:sv.served||0,day:sv.day||1},
+    nextDrop:nxt?nxt.date:null,lastDrop:DROPS[DROPS.length-1].date,mobile:/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)}}
+function snap(force){if(!force&&Date.now()-TR.lastSnap<60000)return;TR.lastSnap=Date.now();try{track('home','snap',snapshot())}catch(e){}}
+const loadJs=src=>new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)});
+async function trInit(){try{if(!window.OWAMBE_CONFIG)await loadJs('/config.js');const C=window.OWAMBE_CONFIG||{};
+  if(!C.supabaseUrl||!C.supabaseAnonKey)return;
+  if(!window.supabase)await loadJs('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js');
+  TR.sb=window.supabase.createClient(C.supabaseUrl,C.supabaseAnonKey,{auth:{persistSession:false}});
+  for(const e of TR.q.splice(0))TR.sb.rpc('mg_log',e).then(()=>{},()=>{})}catch(e){}}
+setInterval(()=>{if(document.visibilityState==='visible')track(TR.game,'ping')},60000);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)snap()});
+
 /* ================= boot ================= */
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
 $('#mascotArt').innerHTML=BUNNY_SVG;$('#spBunny').innerHTML=BUNNY_SVG;$('#spTitle').textContent='For '+FOR_NAME+' 💜';
 spawnFloaters();updSndBtns();tickLive();setInterval(tickLive,1000);setInterval(()=>{if(!$('#home').hidden)renderDrop()},30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&SND.ctx)SND.ctx.resume()});
-renderHome();show('home');
+track('home','open');renderHome();show('home');snap(true);trInit();
 if(location.hash==='#salon'){history.replaceState(null,'',location.pathname);setTimeout(()=>{$('#splash')&&enter();openSalon()},50)}
 </script>
 </body>

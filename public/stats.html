@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>May's Games · Seun's dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="/config.js"></script>
+<style>
+:root{--bg:#FFF7F0;--ink:#3B2F3F;--muted:#8a7d8f;--line:#EADFEF;--accent:#A55EEA;--soft:#F7F0FA}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif}
+h1,h2,h3{font-family:Fredoka,sans-serif;margin:0}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 50px}
+.hidden{display:none!important}
+.card{background:#fff;border-radius:20px;padding:16px;box-shadow:0 3px 0 var(--line);margin-bottom:14px}
+#lock{max-width:360px;margin:16vh auto;text-align:center}
+#lock input{width:100%;font:inherit;font-size:17px;padding:13px 14px;border-radius:14px;border:2px solid var(--line);margin:14px 0 10px;text-align:center}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:12px;padding:11px 16px;font:inherit;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.alt{background:var(--soft);color:var(--ink)}
+#err{color:#d6336c;font-weight:800;min-height:20px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+header h1{font-size:24px}
+.status{display:inline-flex;align-items:center;gap:7px;background:#fff;border-radius:999px;padding:7px 13px;font-weight:800;font-size:14px;box-shadow:0 2px 0 var(--line)}
+.dot{width:9px;height:9px;border-radius:50%;background:#bbb}
+.dot.on{background:#1DD1A1;box-shadow:0 0 0 4px rgba(29,209,161,.2)}
+.sect{font-family:Fredoka;font-size:18px;margin:20px 2px 10px}
+.alert{display:flex;gap:10px;align-items:flex-start;border-radius:16px;padding:12px 14px;margin-bottom:8px;font-weight:700;line-height:1.4}
+.alert i{font-style:normal;font-size:20px}
+.alert.need{background:#FFE6EE}.alert.good{background:#DDF7EE}.alert.info{background:var(--soft)}
+.alert small{display:block;font-weight:700;color:var(--muted);margin-top:2px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.tile{background:#fff;border-radius:16px;padding:12px;text-align:center;box-shadow:0 3px 0 var(--line)}
+.tile b{display:block;font-family:Fredoka;font-size:26px}
+.tile span{font-size:12px;font-weight:800;color:var(--muted)}
+.bars{display:flex;align-items:flex-end;gap:5px;height:120px;padding-top:8px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:10px;font-weight:800;color:var(--muted)}
+.bar div{width:100%;border-radius:6px 6px 2px 2px;background:linear-gradient(#C77DFF,#A55EEA);min-height:3px}
+.bar em{font-style:normal;margin-top:4px}
+.games{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.game{background:#fff;border-radius:18px;padding:14px;box-shadow:0 3px 0 var(--line)}
+.game h3{font-size:16px;margin-bottom:6px}
+.game p{margin:3px 0;font-size:14px;font-weight:700}
+.game p span{color:var(--muted)}
+.feed div{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-weight:700;font-size:14px}
+.feed div:last-child{border:0}
+.feed time{color:var(--muted);white-space:nowrap;font-size:12.5px}
+.looks{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.looks figure{margin:0;background:var(--soft);border-radius:12px;overflow:hidden;text-align:center;font-size:11px;font-weight:800;padding-bottom:5px}
+.looks img{width:100%;display:block;aspect-ratio:44/50;object-fit:cover}
+.muted{color:var(--muted);font-weight:700;font-size:14px}
+@media(max-width:520px){.tiles{grid-template-columns:repeat(2,1fr)}.games{grid-template-columns:1fr}.looks{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="lock" class="card">
+    <h2>🔒 May's Games</h2>
+    <p class="muted">Seun's private dashboard</p>
+    <input id="code" type="password" placeholder="Passcode" autocomplete="off">
+    <button class="btn" id="go">Open</button>
+    <div id="err"></div>
+  </div>
+
+  <div id="dash" class="hidden">
+    <header>
+      <div><h1>May's Games 🐰</h1><div class="muted" id="sub"></div></div>
+      <div><span class="status"><span class="dot" id="dot"></span><span id="statusT"></span></span>
+        <button class="btn alt" id="refresh" style="margin-left:6px">↻</button><button class="btn alt" id="out">Lock</button></div>
+    </header>
+
+    <div class="sect" style="margin-top:4px">📣 Does she need an update?</div>
+    <div id="alerts"></div>
+
+    <div class="sect">At a glance</div>
+    <div class="tiles" id="tiles"></div>
+
+    <div class="sect">Last 14 days</div>
+    <div class="card"><div class="bars" id="bars"></div><div class="muted" style="font-size:12px;margin-top:6px">Games opened per day (Lagos time)</div></div>
+
+    <div class="sect">Each game</div>
+    <div class="games" id="games"></div>
+
+    <div class="sect">💇🏾‍♀️ Her latest salon looks</div>
+    <div class="card"><div class="looks" id="looks"></div><div style="margin-top:10px"><a class="btn alt" href="/salon/stats.html">Full salon details →</a></div></div>
+
+    <div class="sect">Recent wins</div>
+    <div class="card feed" id="feed"></div>
+    <p class="muted" style="text-align:center;margin-top:16px">Updates by itself every minute while this page is open.</p>
+  </div>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const st=(k,v)=>{try{v===undefined?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};const ld=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const CFG=window.OWAMBE_CONFIG||{};let sb=null,code='',timer=null;
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=s=>s==null?'–':Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+function ago(t){if(!t)return'never';const s=(Date.now()-new Date(t))/1000;if(s<90)return'just now';if(s<3600)return Math.round(s/60)+' min ago';if(s<86400)return Math.round(s/3600)+'h ago';const d=Math.round(s/86400);return d+' day'+(d>1?'s':'')+' ago'}
+const dateNice=d=>d?new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}):'';
+const GAME={sudoku:'🎨 Paint Sudoku',colour:'🖍️ Colouring Book',logic:'🧩 Picture Logic',fruit:'🍉 Fruit Slash',paint:'🖌️ Free Paint',salon:'💇🏾‍♀️ Hair Studio',home:'🏠 Dashboard'};
+async function client(){if(sb)return sb;if(!CFG.supabaseUrl)throw new Error('Supabase is not set up in config.js');
+  if(!window.supabase)await new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s)});
+  sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey,{auth:{persistSession:false}});return sb}
+async function fetchAll(){const c=await client();
+  const [a,b]=await Promise.all([c.rpc('get_mays',{p_code:code}),c.rpc('get_salon',{p_code:code})]);
+  if(a.error)throw new Error(/passcode/i.test(a.error.message)?'Wrong passcode':/get_mays/i.test(a.error.message)?'Run supabase/setup.sql in Supabase first':a.error.message);
+  return{m:a.data,s:b.error?null:b.data}}
+async function open(){$('#err').textContent='';try{const d=await fetchAll();st('mays_stats_code',code);$('#lock').classList.add('hidden');$('#dash').classList.remove('hidden');render(d);
+  clearInterval(timer);timer=setInterval(async()=>{try{render(await fetchAll())}catch(e){}},60000)}catch(e){$('#err').textContent=e.message;$('#lock').classList.remove('hidden');$('#dash').classList.add('hidden')}}
+$('#go').onclick=()=>{code=$('#code').value.trim();if(code)open()};$('#code').addEventListener('keydown',e=>{if(e.key==='Enter')$('#go').click()});
+$('#out').onclick=()=>{st('mays_stats_code');location.reload()};$('#refresh').onclick=()=>open();
+
+function alerts(m,s,snap,lastSeen){const A=[];const add=(k,i,t,sm)=>A.push(`<div class="alert ${k}"><i>${i}</i><div>${t}${sm?`<small>${sm}</small>`:''}</div></div>`);
+  if(!snap){add('info','👋','No game data yet.','Once setup.sql has been run, it fills in the next time she opens maysgame.pages.dev.');return A.join('')}
+  const days=lastSeen?(Date.now()-new Date(lastSeen))/864e5:99;
+  if(days>=3)add('need','😴',`She hasn't played in ${Math.floor(days)} days.`,'A new drop or a little nudge could bring her back.');
+  if(!snap.nextDrop)add('need','📦','All scheduled drops are out.','Time to plan new puzzles and colouring pages.');
+  const nnLeft=(snap.nnSmallOpen+snap.nnBigOpen)-(snap.nnSmallDone+snap.nnBigDone);
+  if(nnLeft<=0)add('need','🧩','Picture Logic: she has solved every unlocked puzzle.',snap.nextDrop?`More unlock on ${dateNice(snap.nextDrop)}.`:'No more are scheduled. Add new ones.');
+  else if(nnLeft===1)add('info','🧩','Picture Logic: only 1 unlocked puzzle left.',snap.nextDrop?`More unlock on ${dateNice(snap.nextDrop)}.`:'');
+  if(snap.cbDone>=snap.cbOpen)add('need','🖍️','Colouring Book: every unlocked page is finished.',snap.cbOpen<snap.cbTotal?`More unlock on ${dateNice(snap.nextDrop)}.`:'Add new pages.');
+  if(snap.suBest&&snap.suBest.tricky!=null&&snap.suBest.tricky<300)add('info','💎',`Sudoku may be getting easy: Tricky solved in ${fmt(snap.suBest.tricky)}.`,'A harder level could keep it fun.');
+  if(snap.trophies>=snap.trophiesTotal-3)add('need','🏆',`She has ${snap.trophies}/${snap.trophiesTotal} trophies.`,'Add new trophies to chase.');
+  if(snap.streak>=3)add('good','🔥',`She's on a ${snap.streak}-day painting streak.`);
+  const g7=m.games7||{},fav=Object.entries(g7).filter(([g])=>g!=='home').sort((a,b)=>b[1]-a[1])[0];
+  if(fav&&fav[1]>=3)add('good','⭐',`Favourite this week: ${GAME[fav[0]]} (${fav[1]} times).`,'More of this would land well.');
+  if(!A.some(x=>x.includes('alert need')))add('good','✅','Nothing urgent. She has things left to play.');
+  if(snap.nextDrop)add('info','🎁',`Next drop: ${dateNice(snap.nextDrop)}.`,`Last scheduled drop: ${dateNice(snap.lastDrop)}.`);
+  return A.join('')}
+
+function render({m,s}){const snap=m.snap&&m.snap.data,dev=(m.devices||[])[0],lastSeen=dev&&dev.last_seen,online=m.online||[];
+  $('#dot').classList.toggle('on',online.length>0);
+  $('#statusT').textContent=online.length?'Playing now: '+online.map(g=>GAME[g]||g).join(', '):'Last seen '+ago(lastSeen);
+  $('#sub').textContent=snap?`Progress as of ${ago(m.snap.at)}${(m.devices||[]).length>1?` · ${(m.devices||[]).length} devices`:''}`:'';
+  $('#alerts').innerHTML=alerts(m,s,snap,lastSeen);
+  const g7=m.games7||{},plays7=Object.entries(g7).filter(([g])=>g!=='home').reduce((a,[,n])=>a+n,0);
+  $('#tiles').innerHTML=[[dev?dev.days_played:0,'days played'],[plays7,'games opened (7 days)'],[snap?snap.streak:0,'day streak 🔥'],[snap?snap.trophies+'/'+snap.trophiesTotal:'–','trophies 🏆']]
+    .map(([b,t])=>`<div class="tile"><b>${b}</b><span>${t}</span></div>`).join('');
+  const daily={};(m.daily||[]).forEach(d=>daily[d.day]=d);const days=[];for(let i=13;i>=0;i--){const d=new Date(Date.now()-i*864e5);days.push(d.toLocaleDateString('en-CA',{timeZone:'Africa/Lagos'}))}
+  const max=Math.max(1,...days.map(d=>(daily[d]||{}).plays||0));
+  $('#bars').innerHTML=days.map(d=>{const n=(daily[d]||{}).plays||0;return `<div class="bar" title="${d}: ${n}">${n||''}<div style="height:${n/max*85}%"></div><em>${new Date(d+'T12:00:00').getDate()}</em></div>`}).join('');
+  const sp=snap||{},p=g=>g7[g]?`<p><span>Opened this week:</span> ${g7[g]}</p>`:'<p><span>Not opened this week</span></p>';
+  $('#games').innerHTML=snap?[
+    `<div class="game"><h3>${GAME.sudoku}</h3><p><span>Solved:</span> ${sp.suSolved} · <span>days:</span> ${sp.suDays}</p><p><span>Today:</span> ${sp.today===new Date().toLocaleDateString('en-CA')?(sp.suToday.length?sp.suToday.join(', '):'none yet'):'–'}</p><p><span>Best:</span> Easy ${fmt(sp.suBest.easy)} · Classic ${fmt(sp.suBest.classic)} · Tricky ${fmt(sp.suBest.tricky)}</p>${p('sudoku')}</div>`,
+    `<div class="game"><h3>${GAME.colour}</h3><p><span>Finished:</span> ${sp.cbDone} of ${sp.cbOpen} unlocked (${sp.cbTotal} total)</p>${p('colour')}</div>`,
+    `<div class="game"><h3>${GAME.logic}</h3><p><span>Classic 10×10:</span> ${sp.nnSmallDone}/${sp.nnSmallOpen}</p><p><span>Big 15×15:</span> ${sp.nnBigDone}/${sp.nnBigOpen} unlocked (${sp.nnBigTotal} total)</p>${p('logic')}</div>`,
+    `<div class="game"><h3>${GAME.fruit}</h3><p><span>Games played:</span> ${sp.fsPlays}</p><p><span>Best:</span> Classic ${sp.fsClassic} · Zen ${sp.fsZen}</p>${p('fruit')}</div>`,
+    `<div class="game"><h3>${GAME.paint}</h3><p><span>In her gallery:</span> ${sp.art} · <span>saved in total:</span> ${sp.artSaves}</p>${p('paint')}</div>`,
+    `<div class="game"><h3>${GAME.salon}</h3><p><span>Stars:</span> ${sp.salon.stars} · <span>happy clients:</span> ${sp.salon.served} · <span>day</span> ${sp.salon.day}</p>${p('salon')}</div>`,
+    `<div class="game"><h3>💌 Daily reminders</h3><p><span>Reminders she kept:</span> ${sp.kept}</p></div>`
+  ].join(''):'<p class="muted">Nothing yet.</p>';
+  const clients=(s&&s.clients)||[];
+  $('#looks').innerHTML=clients.filter(c=>c.data&&c.data.thumb).slice(0,8).map(c=>`<figure><img src="${esc(c.data.thumb)}" alt=""><div>${esc(c.data.name||'')} · ${c.data.got}/${c.data.of}</div></figure>`).join('')||'<p class="muted">No looks yet.</p>';
+  const W=(m.wins||[]).map(w=>({at:w.at,t:winText(w.game,w.data||{})})).concat(clients.map(c=>({at:c.at,t:`💇🏾‍♀️ Styled ${esc(c.data.name||'a client')}: ${c.data.got}/${c.data.of} wishes`})))
+    .sort((a,b)=>new Date(b.at)-new Date(a.at)).slice(0,30);
+  $('#feed').innerHTML=W.map(w=>`<div><span>${w.t}</span><time>${ago(w.at)}</time></div>`).join('')||'<p class="muted">No wins yet.</p>'}
+function winText(g,d){
+  if(g==='sudoku')return`🎨 Solved ${esc(d.level)} sudoku in ${fmt(d.secs)}${d.hints?` · ${d.hints} hint${d.hints>1?'s':''}`:''}${d.practice?' · practice':''}`;
+  if(g==='colour')return`🖍️ Finished colouring "${esc(d.page)}"`;
+  if(g==='logic')return`🧩 Solved ${d.big?'big ':''}Picture Logic "${esc(d.name)}" in ${fmt(d.secs)}`;
+  if(g==='fruit')return`🍉 Fruit Slash ${esc(d.mode)}: ${d.score}${d.newBest?' · new best!':''}`;
+  if(g==='paint')return`🖌️ Saved a Free Paint artwork (${d.count} in her gallery)`;
+  return esc(g)}
+const saved=ld('mays_stats_code');if(saved){code=saved;open()}
+</script>
+</body>
+</html>

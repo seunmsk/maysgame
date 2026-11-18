@@ -720,9 +720,10 @@ function goHome(){ state='home'; ['res','how'].forEach(i=>show(i,false)); show('
 function startPlay(){ initAudio(); show('home',false); show('res',false); state='play'; newCustomer(); }
 $('playB').onclick=startPlay; $('nextB').onclick=()=>{ sfx.click(); startPlay(); };
 $('howB').onclick=()=>show('how',true); $('howX').onclick=()=>show('how',false);
-$('homeB').onclick=()=>{ sfx.click(); goHome(); };
-// Inside May's Games dashboard: "All my games" closes the salon instead of loading a new page
+// Inside May's Games dashboard: 🏠 and "All my games" go back to the dashboard instead of a separate page
 const EMBED=window.parent!==window;
+$('homeB').onclick=()=>{ sfx.click(); if(EMBED){ parent.postMessage('mg-close',location.origin); return; } goHome(); };
+document.addEventListener('pointerdown',()=>{ initAudio(); if(AC&&AC.state==='suspended') AC.resume(); },true);
 $('gamesB').addEventListener('click',e=>{ if(EMBED){ e.preventDefault(); try{sfx.click()}catch(_){} parent.postMessage('mg-close',location.origin); } });
 window.addEventListener('message',e=>{ if(e.origin!==location.origin) return;
   if(e.data==='mg-hide'&&AC) AC.suspend(); if(e.data==='mg-show'&&AC) AC.resume(); });
@@ -808,7 +809,10 @@ async function syncInit(){ if(!CFG.supabaseUrl||!CFG.supabaseAnonKey) return;
 sendEv('open',prog()); syncInit();
 setInterval(()=>{ if(document.visibilityState==='visible'&&state!=='home') sendEv('ping',{state}); },60000);
 
-resize(); goHome(); requestAnimationFrame(loop);
+resize();
+if(EMBED){ startPlay(); if(!store.get('mays_how_seen',false)){ show('how',true); store.set('mays_how_seen',true); } }
+else goHome();
+requestAnimationFrame(loop);
 window.__salon={get cust(){return cust}, wishState, get save(){return save}, setTool:(t)=>{tool=t}, setStyle:(st)=>{cust.hair.style=st; rebuildHair();}};
 })();
 </script>

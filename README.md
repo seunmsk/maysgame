@@ -12,5 +12,9 @@ Everything lives in `public/index.html` — no build step.
 Open `public/index.html` and change `FOR_NAME`, `FROM_NAME` and the `NOTES` lists near the top of the script.
 
 ## May's Hair Studio (`/salon/`)
-Salon game at `public/salon/index.html`. Seun's private progress dashboard: `/salon/stats.html` (its own passcode, set in `supabase/salon.sql`).
-Progress goes to Supabase: run `supabase/salon.sql` once in the SQL Editor. Connection details are in `public/config.js`.
+Salon game at `public/salon/index.html`, opened inside the main dashboard (no separate page for May).
+
+## Seun's private dashboard (`/stats`)
+`maysgame.pages.dev/stats` shows progress for every game, plus "does she need an update?" alerts.
+Setup: Supabase → SQL Editor → paste `supabase/setup.sql`, set your passcode on the PASSCODE line, Run. Safe to re-run.
+Connection details are in `public/config.js`.
