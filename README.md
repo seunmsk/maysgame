@@ -10,3 +10,7 @@ Everything lives in `public/index.html` — no build step.
 
 ## Edit the personal notes
 Open `public/index.html` and change `FOR_NAME`, `FROM_NAME` and the `NOTES` lists near the top of the script.
+
+## May's Hair Studio (`/salon/`)
+Salon game at `public/salon/index.html`. Seun's private progress dashboard: `/salon/stats.html` (uses the Owambe stats passcode).
+Progress goes to Supabase: run `supabase/salon.sql` once in the SQL Editor. Connection details are in `public/config.js`.
