@@ -55,10 +55,10 @@ h2{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#d0477f;ma
 </head>
 <body>
 <div id="lock" class="card"><h1>💇🏾‍♀️ May's Salon</h1><div class="sub">Seun's private dashboard</div>
-  <input id="code" type="password" placeholder="Stats passcode" autocomplete="off"><button class="btn" id="go">Open</button><div id="err"></div></div>
+  <input id="code" type="password" placeholder="Salon passcode" autocomplete="off"><button class="btn" id="go">Open</button><div id="err"></div></div>
 <div class="wrap hidden" id="dash">
   <header><div><h1>💇🏾‍♀️ May's Hair Studio</h1><div class="sub">How she's playing · refreshes every 30s</div></div>
-    <div><a class="btn" href="https://owambe.pages.dev/stats" style="text-decoration:none">Owambe stats</a> <button class="btn" id="out">Lock</button></div></header>
+    <div><button class="btn" id="out">Lock</button></div></header>
   <div class="card live"><span class="dot" id="ldot"></span><span id="ltxt">Not playing right now</span></div>
   <div class="kpis" style="margin-top:12px">
     <div class="card k"><b id="kStars">0</b><span>stars earned</span></div>
@@ -86,7 +86,7 @@ function when(t){ return new Date(t).toLocaleString('en-NG',{weekday:'short',hou
 async function client(){ if(sb) return sb; if(!window.supabase) await new Promise((r,j)=>{const e=document.createElement('script');e.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';e.onload=r;e.onerror=j;document.head.appendChild(e);});
   sb=window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey,{auth:{persistSession:false}}); return sb; }
 async function fetchIt(){ const c=await client(); const {data,error}=await c.rpc('get_salon',{p_code:code});
-  if(error) throw new Error(/passcode/i.test(error.message)?'Wrong passcode':/get_salon/i.test(error.message)?'Run supabase/005_salon.sql in Supabase first':error.message); return data; }
+  if(error) throw new Error(/passcode/i.test(error.message)?'Wrong passcode':/get_salon/i.test(error.message)?'Run supabase/salon.sql in Supabase first':error.message); return data; }
 function render(d){
   const P=d.players||[], top=P[0]; const lat=(top&&top.latest)||{};
   const stars=Math.max(0,...P.map(p=>(p.latest||{}).stars||0)); const clients=P.reduce((a,p)=>a+p.clients,0); const days=P.reduce((a,p)=>Math.max(a,p.days_played),0);
@@ -105,12 +105,12 @@ function render(d){
   const U=d.unlocks||[]; $('#ul').innerHTML=UNLOCKS.map(([n,nm])=>{const u=U.find(x=>(x.data.items||[]).some(i=>nm.toLowerCase().startsWith(i.toLowerCase().split(' ')[0])))||null; return `<div><span class="${stars>=n?'got':'no'}">${stars>=n?'✓':'🔒'} ${nm}</span><span class="no">${stars>=n?(u?when(u.at):'unlocked'):n+' ⭐'}</span></div>`;}).join('');
   $('#devs').innerHTML=P.length?P.map(p=>`<div><span>${(p.latest||{}).mobile?'📱 Phone':'💻 Laptop/other'} · ${p.opens} visits · ${p.clients} clients</span><span class="no">first ${when(p.first_seen)}</span></div>`).join(''):'<div class="empty">No devices yet.</div>';
 }
-async function open(){ $('#err').textContent=''; try{ const d=await fetchIt(); st('owambe_stats_code',code); $('#lock').classList.add('hidden'); $('#dash').classList.remove('hidden'); render(d);
+async function open(){ $('#err').textContent=''; try{ const d=await fetchIt(); st('mays_stats_code',code); $('#lock').classList.add('hidden'); $('#dash').classList.remove('hidden'); render(d);
   clearInterval(timer); timer=setInterval(async()=>{ try{ render(await fetchIt()); }catch(e){} },30000); }catch(e){ $('#err').textContent=e.message; } }
 $('#go').onclick=()=>{ code=$('#code').value.trim(); if(code) open(); };
 $('#code').onkeydown=e=>{ if(e.key==='Enter') $('#go').click(); };
-$('#out').onclick=()=>{ st('owambe_stats_code'); location.reload(); };
-const saved=ld('owambe_stats_code'); if(saved){ code=saved; open(); }
+$('#out').onclick=()=>{ st('mays_stats_code'); location.reload(); };
+const saved=ld('mays_stats_code'); if(saved){ code=saved; open(); }
 </script>
 </body>
 </html>

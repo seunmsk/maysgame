@@ -1,5 +1,5 @@
--- May's Hair Studio (owambe.pages.dev/may): progress tracking for Seun's private dashboard.
--- Run once in Supabase → SQL Editor. Uses the same stats passcode as the Owambe dashboard.
+-- May's Hair Studio (maysgame.pages.dev/salon): progress tracking for Seun's private dashboard.
+-- Run once in Supabase → SQL Editor. Has its OWN passcode (set on the line marked PASSCODE below).
 
 create table if not exists public.salon_events (
   id bigserial primary key,
@@ -12,6 +12,13 @@ create index if not exists salon_events_at on public.salon_events (at desc);
 create index if not exists salon_events_dev on public.salon_events (device, at desc);
 alter table public.salon_events enable row level security;
 revoke all on public.salon_events from anon, authenticated;
+
+create table if not exists public.salon_admin (key text primary key, value text not null);
+alter table public.salon_admin enable row level security;
+revoke all on public.salon_admin from anon, authenticated;
+-- PASSCODE: change CHANGE-ME to your own passcode before running
+insert into public.salon_admin (key, value) values ('code', 'CHANGE-ME')
+  on conflict (key) do update set value = excluded.value;
 
 create or replace function public.salon_log(p_device text, p_kind text, p_data jsonb default '{}'::jsonb)
 returns void language plpgsql security definer set search_path = public as $$
@@ -28,7 +35,7 @@ create or replace function public.get_salon(p_code text)
 returns json language plpgsql security definer set search_path = public as $$
 declare r json;
 begin
-  if not exists (select 1 from admin_config where key = 'stats_code' and value = p_code and value <> 'CHANGE-ME') then
+  if not exists (select 1 from salon_admin where key = 'code' and value = p_code and value <> 'CHANGE-ME') then
     raise exception 'Wrong passcode';
   end if;
   select json_build_object(
